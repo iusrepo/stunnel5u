@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.26
-Release: 1.8.0
+Version: 4.04
+Release: 3
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -11,10 +11,13 @@ Source2: stunnel.cnf
 Source3: Certificate-Creation
 Source4: sfinger.xinetd
 Source5: pop3-redirect.xinetd
-Patch0: stunnel-3.26-authpriv.patch
+Patch0: stunnel-4.02-authpriv.patch
+Patch1: stunnel-4.00-nopem.patch
 Buildroot: %{_tmppath}/stunnel-root
-BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words, tcp_wrappers
-Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
+BuildPrereq: automake14, autoconf, openssl-devel, perl, pkgconfig,
+BuildPrereq: tcp_wrappers, /usr/share/dict/words
+Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig
+Prereq: /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
 Requires: make
 
 %description
@@ -25,45 +28,31 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %prep
 %setup -q
 %patch0 -p1 -b .authpriv
+%patch1 -p1 -b .nopem
+aclocal-1.4
+automake-1.4 -a
+autoconf
 
 %build
 if pkg-config openssl ; then
-	CPPFLAGS=`pkg-config --cflags-only-I openssl`; export CPPFLAGS
-	CFLAGS=`pkg-config --cflags openssl`; export CFLAGS
-	CFLAGS="$CFLAGS $RPM_OPT_FLAGS"
-	LDFLAGS=`pkg-config --libs-only-L openssl`; export LDFLAGS
+	CFLAGS="$RPM_OPT_FLAGS `pkg-config --cflags openssl`"; export CFLAGS
+	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
-%configure \
-	--with-ssl=%{_prefix} \
-	--with-pem-dir=%{_datadir}/ssl/certs \
-	--with-cert-file=%{_datadir}/ssl/cert.pem \
-	--with-cert-dir=%{_datadir}/ssl/trusted \
-	--with-tcp-wrappers
-
-# We have to create a certificate before the makefile asks us to do so.
-rm -f stunnel.pem stunnel.pem.1 stunnel.pem.2
-(echo US
- echo .
- echo .
- echo .
- echo .
- echo .
- echo .
- echo .) | openssl req -newkey rsa:1024 -nodes -keyout stunnel.pem.1 -x509 -days 365 -out stunnel.pem.2
-cat stunnel.pem.1 >  stunnel.pem
-echo ""           >> stunnel.pem
-cat stunnel.pem.2 >> stunnel.pem
-make piddir=/var/run/
+%configure --with-tcp-wrappers
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{makeinstall} \
-	ssldir=$RPM_BUILD_ROOT/%{_datadir}/ssl \
-	man8dir=$RPM_BUILD_ROOT%{_mandir}/man8 \
-	piddir=$RPM_BUILD_ROOT/%{_var}/run \
-	PEM_DIR=$RPM_BUILD_ROOT/%{_datadir}/ssl/certs
-install -m755 stunnel $RPM_BUILD_ROOT/%{_sbindir}/
-install -m644 stunnel.cnf $RPM_BUILD_ROOT/%{_datadir}/ssl
+%makeinstall docdir=`pwd`/installed-docs
+touch $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/stunnel.pem
+rm -f $RPM_BUILD_ROOT/%{_libdir}/*.a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
+rm -f $RPM_BUILD_ROOT/%{_libdir}/*.so.?
+mkdir -p $RPM_BUILD_ROOT/%{_mandir}/pl/man8
+# Move the Polish man pages to the right subdirectory, and strip off the
+# language suffix.
+mv $RPM_BUILD_ROOT/%{_mandir}/man8/*.pl.8* $RPM_BUILD_ROOT/%{_mandir}/pl/man8/
+rename ".pl" "" $RPM_BUILD_ROOT/%{_mandir}/pl/man8/*
 
 %post -p /sbin/ldconfig
 
@@ -74,55 +63,42 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc BUGS COPY* CREDITS FAQ HISTORY PORTS README TODO *.html
+%doc BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO doc/*.html
 %doc $RPM_SOURCE_DIR/Certificate-Creation
 %doc $RPM_SOURCE_DIR/sfinger.xinetd $RPM_SOURCE_DIR/pop3-redirect.xinetd
-%lang(en) %doc doc/english/*
-%lang(po) %doc doc/polish/*
-%ghost %config(noreplace,missingok) %{_datadir}/ssl/certs/stunnel.pem
-%config %{_datadir}/ssl/stunnel.cnf
-%{_libdir}/stunnel.so*
+%lang(en) %doc doc/en/*
+%lang(po) %doc doc/pl/*
+%{_libdir}/libstunnel.so
 %{_mandir}/man8/stunnel.8*
+%{_mandir}/pl/man8/stunnel.8*
 %{_sbindir}/stunnel
+%{_sysconfdir}/%{name}
 
 %changelog
-* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-1.8.0
+* Mon Feb 10 2003 Nalin Dahyabhai <nalin@redhat.com> 4.04-3
 - rebuild
 
-* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-1.7.3
-- rebuild
+* Wed Jan 22 2003 Tim Powers <timp@redhat.com>
+- rebuilt
 
-* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-1.7.1
-- rebuild
+* Wed Jan 15 2003 Nalin Dahyabhai <nalin@redhat.com> 4.04-1
+- update to 4.04
 
-* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-0
-- update to fix bugs in previous erratum and others as well
-- actually include the stunnel.cnf which we install in %%install in the package
+* Tue Jan  7 2003 Nalin Dahyabhai <nalin@redhat.com> 4.03-1
+- use pkgconfig for information about openssl, if available
 
-* Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.8.0
-- rebuild
+* Fri Jan  3 2003 Nalin Dahyabhai <nalin@redhat.com>
+- update to 4.03
 
-* Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.7.3
-- rebuild
+* Mon Oct 21 2002 Nalin Dahyabhai <nalin@redhat.com> 4.02-1
+- update to 4.02
 
-* Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.7.1
-- remove descriptor-closing patch
+* Fri Oct  4 2002 Nalin Dahyabhai <nalin@redhat.com> 4.00-1
+- don't create a dummy cert
 
-* Fri Apr 11 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-4.8.0
-- rebuild
-
-* Fri Apr 11 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-4.7.3
-- rebuild
-
-* Fri Apr 11 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-4.7.1
-- force static linking with libwrap
-
-* Thu Apr 10 2003 Nalin Dahyabhai <nalin@redhat.com>
-- don't leak descriptors to local programs
-- add detached signature from upstream
-
-* Wed Mar 26 2003 Nalin Dahyabhai <nalin@redhat.com>
-- move potentially-unsafe code out of the sigchld handler
+* Wed Sep 25 2002 Nalin Dahyabhai <nalin@redhat.com>
+- update to 4.00
+- remove textutils and fileutils as buildreqs, add automake/autoconf
 
 * Fri Jun 21 2002 Tim Powers <timp@redhat.com>
 - automated rebuild
