@@ -1,0 +1,49 @@
+Change the default log facility from LOG_DAEMON to LOG_AUTHPRIV.
+--- stunnel-4.08/doc/stunnel.pod	2005-01-22 11:42:30.000000000 -0500
++++ stunnel-4.08/doc/stunnel.pod	2005-03-15 17:07:32.714670692 -0500
+@@ -186,7 +186,7 @@
+ all levels numerically less than it will be shown.  Use B<debug = debug> or
+ B<debug = 7> for greatest debugging output.  The default is notice (5).
+ 
+-The syslog facility 'daemon' will be used unless a facility name is supplied.
++The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)
+ 
+ Case is ignored for both facilities and levels.
+--- stunnel-4.08/doc/stunnel.8	2005-01-22 11:42:31.000000000 -0500
++++ stunnel-4.08/doc/stunnel.8	2005-03-15 17:07:32.715670561 -0500
+@@ -269,7 +269,7 @@
+ all levels numerically less than it will be shown.  Use \fBdebug = debug\fR or
+ \&\fBdebug = 7\fR for greatest debugging output.  The default is notice (5).
+ .Sp
+-The syslog facility 'daemon' will be used unless a facility name is supplied.
++The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)
+ .Sp
+ Case is ignored for both facilities and levels.
+--- stunnel-4.08/doc/stunnel.html	2005-01-22 11:42:31.000000000 -0500
++++ stunnel-4.08/doc/stunnel.html	2005-03-15 17:08:57.859551451 -0500
+@@ -270,7 +270,7 @@
+ <strong>debug = 7</strong> for greatest debugging output.  The default is notice (5).</p>
+ </dd>
+ <dd>
+-<p>The syslog facility 'daemon' will be used unless a facility name is supplied.
++<p>The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)</p>
+ </dd>
+ <dd>
+--- stunnel-4.08/src/options.c	2005-02-15 14:08:28.000000000 -0500
++++ stunnel-4.08/src/options.c	2005-03-15 17:07:32.713670823 -0500
+@@ -269,8 +269,12 @@
+     case CMD_INIT:
+         options.debug_level=5;
+ #if !defined (USE_WIN32) && !defined (__vms)
++#if defined(LOG_AUTHPRIV)
++        options.facility=LOG_AUTHPRIV;
++#else
+         options.facility=LOG_DAEMON;
+ #endif
++#endif
+         break;
+     case CMD_EXEC:
+         if(strcasecmp(opt, "debug"))

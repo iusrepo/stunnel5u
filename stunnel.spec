@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 4.05
-Release: 4
+Version: 4.08
+Release: 1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -13,9 +13,9 @@ Source4: sfinger.xinetd
 Source5: stunnel-sfinger.conf
 Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
-Patch0: stunnel-4.02-authpriv.patch
+Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.05-nopem.patch
-Patch2: stunnel-4.05-sample.patch
+Patch2: stunnel-4.08-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: automake14, autoconf, openssl-devel, perl, pkgconfig,
 BuildPrereq: tcp_wrappers, /usr/share/dict/words
@@ -48,9 +48,9 @@ if pkg-config openssl ; then
 	CFLAGS="$RPM_OPT_FLAGS `pkg-config --cflags openssl`"; export CFLAGS
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
-%configure --with-tcp-wrappers
+%configure --with-tcp-wrappers --with-pic
 export tagname=CC
-make LIBTOOL=%{_bindir}/libtool
+make LIBTOOL=%{_bindir}/libtool LDADD=-pie
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -90,9 +90,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/stunnel.8*
 %{_mandir}/*/man8/stunnel.8*
 %{_sbindir}/stunnel
+%{_sbindir}/stunnel3
 %dir %{_sysconfdir}/%{name}
 
 %changelog
+* Wed Mar 16 2005 Nalin Dahyabhai <nalin@redhat.com> 4.08-1
+- update to 4.08
+- build stunnel as a PIE binary
+
 * Mon Nov 22 2004 Miloslav Trmac <mitr@redhat.com> - 4.05-4
 - Convert man pages to UTF-8
 
