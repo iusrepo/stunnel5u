@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.05
-Release: 3
+Release: 4
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -33,6 +33,12 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .nopem
 %patch2 -p1 -b .sample
+
+iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
+mv doc/stunnel.fr.8_ doc/stunnel.fr.8
+iconv -f iso-8859-2 -t utf-8 < doc/stunnel.pl.8 > doc/stunnel.pl.8_
+mv doc/stunnel.pl.8_ doc/stunnel.pl.8
+
 aclocal-1.4
 automake-1.4 -a
 autoconf
@@ -87,6 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/%{name}
 
 %changelog
+* Mon Nov 22 2004 Miloslav Trmac <mitr@redhat.com> - 4.05-4
+- Convert man pages to UTF-8
+
 * Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
 - rebuilt
 
