@@ -1,14 +1,17 @@
 Summary: SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.8
-Release: 4
+Version: 3.10
+Release: 2
 Copyright: GPL
 Group: Applications/Internet
-Source0: http://mike.daewoo.com.pl/computer/stunnel/stunnel-%{version}.tar.gz
+URL: http://stunnel.mirt.net/ 
+Source0: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz
 Source1: stunnel.cnf
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
-Patch0: stunnel-3.8-redhat.patch
+Source4: pop3-redirect.xinetd
+Patch0: stunnel-3.10-64bit.patch
+Patch1: stunnel-3.9-hup.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: openssl-devel, textutils, fileutils, /usr/share/dict/words
 Prereq: openssl >= 0.9.5a, textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
@@ -21,12 +24,16 @@ server.
 
 %prep
 %setup -q
-%patch0 -p1 -b .redhat
+%patch0 -p1 -b .64bit
+%patch1 -p1 -b .hup
 cp %{SOURCE2} .
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -DNO_RC5 -DNO_IDEA"; export CFLAGS
-%configure --with-ssl=%{_datadir}/ssl
+CFLAGS="-g -DNO_RC5 -DNO_IDEA $RPM_OPT_FLAGS"; export CFLAGS
+%configure \
+	--with-ssl=%{_prefix} \
+	--with-pem-dir=%{_datadir}/ssl/certs \
+	--with-cert-file=%{_datadir}/ssl/cert.pem
 
 # We have to create a certificate before the makefile asks us to.
 rm -f stunnel.pem stunnel.pem.1 stunnel.pem.2
@@ -41,15 +48,16 @@ rm -f stunnel.pem stunnel.pem.1 stunnel.pem.2
 cat stunnel.pem.1 >  stunnel.pem
 echo ""           >> stunnel.pem
 cat stunnel.pem.2 >> stunnel.pem
-make
+make piddir=/var/run/
 
 %install
 rm -rf $RPM_BUILD_ROOT
 %{makeinstall} \
 	ssldir=$RPM_BUILD_ROOT/%{_datadir}/ssl \
 	man8dir=$RPM_BUILD_ROOT%{_mandir}/man8 \
-	piddir=$RPM_BUILD_ROOT/%{_var}/run
-install -m644 stunnel.cnf $RPM_BUILD_ROOT/%{_datadir}/ssl/
+	piddir=$RPM_BUILD_ROOT/%{_var}/run \
+	PEM_DIR=$RPM_BUILD_ROOT/%{_datadir}/ssl/certs
+install -m644 stunnel.cnf $RPM_BUILD_ROOT/%{_datadir}/ssl
 
 %post -p /sbin/ldconfig
 
@@ -60,14 +68,30 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc BUGS COPY* FAQ HISTORY PORTS README TODO INSTALL stunnel.html *.txt
-%doc $RPM_SOURCE_DIR/Certificate-Creation $RPM_SOURCE_DIR/sfinger.xinetd
+%doc BUGS COPY* FAQ HISTORY PORTS README TODO stunnel.html *.txt
+%doc $RPM_SOURCE_DIR/Certificate-Creation
+%doc $RPM_SOURCE_DIR/sfinger.xinetd $RPM_SOURCE_DIR/pop3-redirect.xinetd
 %ghost %config(noreplace,missingok) %{_datadir}/ssl/certs/stunnel.pem
 %{_libdir}/stunnel.so*
 %{_mandir}/man8/stunnel.8*
 %{_sbindir}/stunnel
 
 %changelog
+* Thu Dec 21 2000 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.10
+- more 64-bit clean changes, hopefully the last bunch
+
+* Wed Dec 20 2000 Nalin Dahyabhai <nalin@redhat.com>
+- change piddir from the default /var/stunnel to /var/run
+- clean out pid file on SIGHUP
+
+* Fri Dec 15 2000 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.9 to get a security fix
+
+* Wed Oct 25 2000 Matt Wilson <msw@redhat.com>
+- change all unsigned longs to u_int32_t when dealing with network
+  addresses
+
 * Fri Aug 18 2000 Nalin Dahyabhai <nalin@redhat.com>
 - make stunnel.pem also be (missingok)
 
