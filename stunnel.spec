@@ -51,7 +51,7 @@ if pkg-config openssl ; then
 fi
 %configure --with-tcp-wrappers --with-pic
 export tagname=CC
-make LIBTOOL=%{_bindir}/libtool LDADD=-pie
+make LIBTOOL=%{_bindir}/libtool LDADD="-pie -Wl,-z,defs,-z,relro"
 
 %install
 rm -rf $RPM_BUILD_ROOT
