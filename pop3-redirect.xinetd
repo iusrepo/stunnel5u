@@ -2,7 +2,7 @@
 # description: The POP3 redirector allows client software which does not have \
 #	       native support for SSL to connect to the local machine's POP3 \
 #	       port and have the connection forwarded over the network using \
-#	       SSL.  You will need to modify /etc/xinetd.d/pop3-redirect to \
+#	       SSL.  You will need to modify stunnel-pop3s-client.conf to \
 #	       specify the server to connect to in order for this to be useful.
 service pop3
 {
@@ -11,7 +11,7 @@ service pop3
 	wait			= no
 	user			= root
 	server			= /usr/sbin/stunnel
-	server_args		= -c -r pop3s-server.example.com:pop3s
+	server_args		= /etc/stunnel/stunnel-pop3s-client.conf
 	log_on_success		+= USERID
 	log_on_failure		+= USERID
 }

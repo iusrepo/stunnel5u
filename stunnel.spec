@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.04
-Release: 3
+Release: 4
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -10,7 +10,9 @@ Source1: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz.asc
 Source2: stunnel.cnf
 Source3: Certificate-Creation
 Source4: sfinger.xinetd
-Source5: pop3-redirect.xinetd
+Source5: stunnel-sfinger.conf
+Source6: pop3-redirect.xinetd
+Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.02-authpriv.patch
 Patch1: stunnel-4.00-nopem.patch
 Buildroot: %{_tmppath}/stunnel-root
@@ -65,7 +67,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO doc/*.html
 %doc $RPM_SOURCE_DIR/Certificate-Creation
-%doc $RPM_SOURCE_DIR/sfinger.xinetd $RPM_SOURCE_DIR/pop3-redirect.xinetd
+%doc $RPM_SOURCE_DIR/sfinger.xinetd
+%doc $RPM_SOURCE_DIR/pop3-redirect.xinetd
+%doc $RPM_SOURCE_DIR/stunnel-pop3s-client.conf
+%doc $RPM_SOURCE_DIR/stunnel-sfinger.conf
 %lang(en) %doc doc/en/*
 %lang(po) %doc doc/pl/*
 %{_libdir}/libstunnel.so
@@ -75,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/%{name}
 
 %changelog
+* Fri Mar 21 2003 Nalin Dahyabhai <nalin@redhat.com> 4.04-4
+- fix xinetd configuration samples
+
 * Mon Feb 10 2003 Nalin Dahyabhai <nalin@redhat.com> 4.04-3
 - rebuild
 
