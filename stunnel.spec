@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.22
-Release: 5.8.0
+Version: 3.26
+Release: 1.8.0
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -11,9 +11,7 @@ Source2: stunnel.cnf
 Source3: Certificate-Creation
 Source4: sfinger.xinetd
 Source5: pop3-redirect.xinetd
-Patch0: stunnel-3.20-authpriv.patch
-Patch1: stunnel-3.22-sigchld.patch
-Patch2: stunnel-3.22-static-libwrap.patch
+Patch0: stunnel-3.26-authpriv.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words, tcp_wrappers
 Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
@@ -27,8 +25,6 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %prep
 %setup -q
 %patch0 -p1 -b .authpriv
-%patch1 -p1 -b .sigchld
-%patch2 -p1 -b .static-libwrap
 
 %build
 if pkg-config openssl ; then
@@ -84,11 +80,25 @@ rm -rf $RPM_BUILD_ROOT
 %lang(en) %doc doc/english/*
 %lang(po) %doc doc/polish/*
 %ghost %config(noreplace,missingok) %{_datadir}/ssl/certs/stunnel.pem
+%config %{_datadir}/ssl/stunnel.cnf
 %{_libdir}/stunnel.so*
 %{_mandir}/man8/stunnel.8*
 %{_sbindir}/stunnel
 
 %changelog
+* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-1.8.0
+- rebuild
+
+* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-1.7.3
+- rebuild
+
+* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-1.7.1
+- rebuild
+
+* Mon Oct  6 2003 Nalin Dahyabhai <nalin@redhat.com> 3.26-0
+- update to fix bugs in previous erratum and others as well
+- actually include the stunnel.cnf which we install in %%install in the package
+
 * Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.8.0
 - rebuild
 
