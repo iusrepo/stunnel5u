@@ -1,16 +1,19 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 3.22
-Release: 4
+Release: 5.8.0
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
 Source0: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz
-Source1: stunnel.cnf
-Source2: Certificate-Creation
-Source3: sfinger.xinetd
-Source4: pop3-redirect.xinetd
+Source1: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz.asc
+Source2: stunnel.cnf
+Source3: Certificate-Creation
+Source4: sfinger.xinetd
+Source5: pop3-redirect.xinetd
 Patch0: stunnel-3.20-authpriv.patch
+Patch1: stunnel-3.22-sigchld.patch
+Patch2: stunnel-3.22-static-libwrap.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words, tcp_wrappers
 Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
@@ -23,9 +26,17 @@ in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
 %setup -q
-%patch -p1 -b .authpriv
+%patch0 -p1 -b .authpriv
+%patch1 -p1 -b .sigchld
+%patch2 -p1 -b .static-libwrap
 
 %build
+if pkg-config openssl ; then
+	CPPFLAGS=`pkg-config --cflags-only-I openssl`; export CPPFLAGS
+	CFLAGS=`pkg-config --cflags openssl`; export CFLAGS
+	CFLAGS="$CFLAGS $RPM_OPT_FLAGS"
+	LDFLAGS=`pkg-config --libs-only-L openssl`; export LDFLAGS
+fi
 %configure \
 	--with-ssl=%{_prefix} \
 	--with-pem-dir=%{_datadir}/ssl/certs \
@@ -33,7 +44,7 @@ in conjunction with imapd to create an SSL secure IMAP server.
 	--with-cert-dir=%{_datadir}/ssl/trusted \
 	--with-tcp-wrappers
 
-# We have to create a certificate before the makefile asks us to.
+# We have to create a certificate before the makefile asks us to do so.
 rm -f stunnel.pem stunnel.pem.1 stunnel.pem.2
 (echo US
  echo .
@@ -78,6 +89,31 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/stunnel
 
 %changelog
+* Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.8.0
+- rebuild
+
+* Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.7.3
+- rebuild
+
+* Thu Jul 10 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-5.7.1
+- remove descriptor-closing patch
+
+* Fri Apr 11 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-4.8.0
+- rebuild
+
+* Fri Apr 11 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-4.7.3
+- rebuild
+
+* Fri Apr 11 2003 Nalin Dahyabhai <nalin@redhat.com> 3.22-4.7.1
+- force static linking with libwrap
+
+* Thu Apr 10 2003 Nalin Dahyabhai <nalin@redhat.com>
+- don't leak descriptors to local programs
+- add detached signature from upstream
+
+* Wed Mar 26 2003 Nalin Dahyabhai <nalin@redhat.com>
+- move potentially-unsafe code out of the sigchld handler
+
 * Fri Jun 21 2002 Tim Powers <timp@redhat.com>
 - automated rebuild
 
