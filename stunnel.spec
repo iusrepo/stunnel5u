@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.19
+Version: 3.22
 Release: 1
 License: GPL
 Group: Applications/Internet
@@ -10,6 +10,7 @@ Source1: stunnel.cnf
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: pop3-redirect.xinetd
+Patch0: stunnel-3.20-authpriv.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words, tcp_wrappers
 Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
@@ -22,12 +23,14 @@ in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
 %setup -q
+%patch -p1 -b .authpriv
 
 %build
 %configure \
 	--with-ssl=%{_prefix} \
 	--with-pem-dir=%{_datadir}/ssl/certs \
 	--with-cert-file=%{_datadir}/ssl/cert.pem \
+	--with-cert-dir=%{_datadir}/ssl/trusted \
 	--with-tcp-wrappers
 
 # We have to create a certificate before the makefile asks us to.
@@ -52,6 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 	man8dir=$RPM_BUILD_ROOT%{_mandir}/man8 \
 	piddir=$RPM_BUILD_ROOT/%{_var}/run \
 	PEM_DIR=$RPM_BUILD_ROOT/%{_datadir}/ssl/certs
+install -m755 stunnel $RPM_BUILD_ROOT/%{_sbindir}/
 install -m644 stunnel.cnf $RPM_BUILD_ROOT/%{_datadir}/ssl
 
 %post -p /sbin/ldconfig
@@ -63,16 +67,29 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc BUGS COPY* FAQ HISTORY PORTS README TODO stunnel.html *.txt
+%doc BUGS COPY* CREDITS FAQ HISTORY PORTS README TODO *.html
 %doc $RPM_SOURCE_DIR/Certificate-Creation
 %doc $RPM_SOURCE_DIR/sfinger.xinetd $RPM_SOURCE_DIR/pop3-redirect.xinetd
+%lang(en) %doc doc/english/*
+%lang(po) %doc doc/polish/*
 %ghost %config(noreplace,missingok) %{_datadir}/ssl/certs/stunnel.pem
 %{_libdir}/stunnel.so*
 %{_mandir}/man8/stunnel.8*
 %{_sbindir}/stunnel
 
 %changelog
-* Fri Aug 10 2001 Nalin Dahyabhai <nalin@redhat.com>
+* Wed Jan  2 2002 Nalin Dahyabhai <nalin@redhat.com> 3.22-1
+- update to 3.22, correcting a format-string vulnerability
+
+* Wed Oct 31 2001 Nalin Dahyabhai <nalin@redhat.com> 3.21a-1
+- update to 3.21a
+
+* Tue Aug 28 2001 Nalin Dahyabhai <nalin@redhat.com> 3.20-1
+- log using LOG_AUTHPRIV facility by default (#47289)
+- make permissions on stunnel binary 0755
+- implicitly trust certificates in %%{_datadir}/ssl/trusted (#24034)
+
+* Fri Aug 10 2001 Nalin Dahyabhai <nalin@redhat.com> 3.19-1
 - update to 3.19 to avoid problems with stunnel being multithreaded, but
   tcp wrappers not being thrad-safe
 

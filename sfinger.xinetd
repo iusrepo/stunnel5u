@@ -7,5 +7,5 @@ service sfinger
 	wait		= no
 	user		= root
 	server		= /usr/sbin/stunnel
-	server_args	= -s nobody -l /usr/sbin/in.fingerd -- in.fingerd
+	server_args	= -l /usr/sbin/in.fingerd -- in.fingerd
 }
