@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 4.04
-Release: 6
+Version: 4.05
+Release: 1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -14,7 +14,7 @@ Source5: stunnel-sfinger.conf
 Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.02-authpriv.patch
-Patch1: stunnel-4.00-nopem.patch
+Patch1: stunnel-4.05-nopem.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: automake14, autoconf, openssl-devel, perl, pkgconfig,
 BuildPrereq: tcp_wrappers, /usr/share/dict/words
@@ -48,15 +48,16 @@ make LIBTOOL=/usr/bin/libtool
 rm -rf $RPM_BUILD_ROOT
 export tagname=CC
 %makeinstall docdir=`pwd`/installed-docs LIBTOOL=/usr/bin/libtool
-touch $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/stunnel.pem
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.so.?
-mkdir -p $RPM_BUILD_ROOT/%{_mandir}/pl/man8
-# Move the Polish man pages to the right subdirectory, and strip off the
-# language suffix.
-mv $RPM_BUILD_ROOT/%{_mandir}/man8/*.pl.8* $RPM_BUILD_ROOT/%{_mandir}/pl/man8/
-rename ".pl" "" $RPM_BUILD_ROOT/%{_mandir}/pl/man8/*
+# Move the translated man pages to the right subdirectories, and strip off the
+# language suffixes.
+for lang in fr pl ; do
+	mkdir -p $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8
+	mv $RPM_BUILD_ROOT/%{_mandir}/man8/*.${lang}.8* $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/
+	rename ".${lang}" "" $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/*
+done
 
 %post -p /sbin/ldconfig
 
@@ -77,11 +78,20 @@ rm -rf $RPM_BUILD_ROOT
 %lang(po) %doc doc/pl/*
 %{_libdir}/libstunnel.so
 %{_mandir}/man8/stunnel.8*
-%{_mandir}/pl/man8/stunnel.8*
+%{_mandir}/*/man8/stunnel.8*
 %{_sbindir}/stunnel
 %{_sysconfdir}/%{name}
 
 %changelog
+* Thu Mar 11 2004 Nalin Dahyabhai <nalin@redhat.com> 4.05-1
+- update to 4.05
+
+* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Thu Aug  7 2003 Elliot Lee <sopwith@redhat.com> 4.04-6
 - Fix libtool
 
