@@ -1,7 +1,8 @@
+%define sdf_version 2.001
 Summary: SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.10
-Release: 2
+Version: 3.13
+Release: 3
 Copyright: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -10,11 +11,10 @@ Source1: stunnel.cnf
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: pop3-redirect.xinetd
-Patch0: stunnel-3.10-64bit.patch
-Patch1: stunnel-3.9-hup.patch
 Buildroot: %{_tmppath}/stunnel-root
-BuildPrereq: openssl-devel, textutils, fileutils, /usr/share/dict/words
+BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words
 Prereq: openssl >= 0.9.5a, textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
+Requires: make
 
 %description
 stunnel is a socket wrapper which can be used to give ordinary
@@ -24,9 +24,6 @@ server.
 
 %prep
 %setup -q
-%patch0 -p1 -b .64bit
-%patch1 -p1 -b .hup
-cp %{SOURCE2} .
 
 %build
 CFLAGS="-g -DNO_RC5 -DNO_IDEA $RPM_OPT_FLAGS"; export CFLAGS
@@ -77,6 +74,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/stunnel
 
 %changelog
+* Mon Mar 26 2001 Preston Brown <pbrown@redhat.com>
+- depend on make (#33148)
+
+* Fri Mar  2 2001 Nalin Dahyabhai <nalin@redhat.com>
+- rebuild in new environment
+
+* Tue Feb  6 2001 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.13 to get pthread, OOB, 64-bit fixes
+- don't need sdf any more
+
+* Thu Dec 28 2000 Nalin Dahyabhai <nalin@redhat.com>
+- pull in sdf to build the man page (#22892)
+
+* Fri Dec 22 2000 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.11
+- chuck the SIGHUP patch (went upstream)
+- chuck parts of the 64-bit clean patch (went upstream)
+
 * Thu Dec 21 2000 Nalin Dahyabhai <nalin@redhat.com>
 - update to 3.10
 - more 64-bit clean changes, hopefully the last bunch
