@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.05
-Release: 2
+Release: 3
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/%{name}
 
 %changelog
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Thu May 27 2004 Nalin Dahyabhai <nalin@redhat.com> 4.05-2
 - move the sample configuration to %%doc, it shouldn't be used as-is (#124373)
 
