@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.17
+Version: 3.19
 Release: 1
 License: GPL
 Group: Applications/Internet
@@ -72,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/stunnel
 
 %changelog
+* Fri Aug 10 2001 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.19 to avoid problems with stunnel being multithreaded, but
+  tcp wrappers not being thrad-safe
+
 * Mon Jul 30 2001 Nalin Dahyabhai <nalin@redhat.com>
 - update to 3.17
 
