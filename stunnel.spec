@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.05
-Release: 1
+Release: 2
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -15,6 +15,7 @@ Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.02-authpriv.patch
 Patch1: stunnel-4.05-nopem.patch
+Patch2: stunnel-4.05-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: automake14, autoconf, openssl-devel, perl, pkgconfig,
 BuildPrereq: tcp_wrappers, /usr/share/dict/words
@@ -31,6 +32,7 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .nopem
+%patch2 -p1 -b .sample
 aclocal-1.4
 automake-1.4 -a
 autoconf
@@ -42,15 +44,16 @@ if pkg-config openssl ; then
 fi
 %configure --with-tcp-wrappers
 export tagname=CC
-make LIBTOOL=/usr/bin/libtool
+make LIBTOOL=%{_bindir}/libtool
 
 %install
 rm -rf $RPM_BUILD_ROOT
 export tagname=CC
-%makeinstall docdir=`pwd`/installed-docs LIBTOOL=/usr/bin/libtool
+%makeinstall docdir=`pwd`/installed-docs LIBTOOL=%{_bindir}/libtool
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.so.?
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/stunnel/*sample*
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
 for lang in fr pl ; do
@@ -74,15 +77,19 @@ rm -rf $RPM_BUILD_ROOT
 %doc $RPM_SOURCE_DIR/pop3-redirect.xinetd
 %doc $RPM_SOURCE_DIR/stunnel-pop3s-client.conf
 %doc $RPM_SOURCE_DIR/stunnel-sfinger.conf
+%doc tools/stunnel.conf-sample
 %lang(en) %doc doc/en/*
 %lang(po) %doc doc/pl/*
 %{_libdir}/libstunnel.so
 %{_mandir}/man8/stunnel.8*
 %{_mandir}/*/man8/stunnel.8*
 %{_sbindir}/stunnel
-%{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/%{name}
 
 %changelog
+* Thu May 27 2004 Nalin Dahyabhai <nalin@redhat.com> 4.05-2
+- move the sample configuration to %%doc, it shouldn't be used as-is (#124373)
+
 * Thu Mar 11 2004 Nalin Dahyabhai <nalin@redhat.com> 4.05-1
 - update to 4.05
 
