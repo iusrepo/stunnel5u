@@ -44,8 +44,9 @@ automake-1.4 -a
 autoconf
 
 %build
+CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
 if pkg-config openssl ; then
-	CFLAGS="$RPM_OPT_FLAGS `pkg-config --cflags openssl`"; export CFLAGS
+	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
 %configure --with-tcp-wrappers --with-pic
