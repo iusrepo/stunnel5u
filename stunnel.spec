@@ -1,9 +1,8 @@
-%define sdf_version 2.001
-Summary: SSL-encrypting socket wrapper.
+Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 3.13
-Release: 3
-Copyright: GPL
+Version: 3.17
+Release: 1
+License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
 Source0: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz
@@ -12,25 +11,24 @@ Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: pop3-redirect.xinetd
 Buildroot: %{_tmppath}/stunnel-root
-BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words
-Prereq: openssl >= 0.9.5a, textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
+BuildPrereq: openssl-devel, perl, textutils, fileutils, /usr/share/dict/words, tcp_wrappers
+Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig, /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
 Requires: make
 
 %description
-stunnel is a socket wrapper which can be used to give ordinary
-applications SSL (secure sockets layer) support. For example, it
-can be used in conjunction with a imapd to create a SSL secure IMAP
-server.
+Stunnel is a socket wrapper which can provide SSL (Secure Sockets
+Layer) support to ordinary applications. For example, it can be used
+in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
 %setup -q
 
 %build
-CFLAGS="-g -DNO_RC5 -DNO_IDEA $RPM_OPT_FLAGS"; export CFLAGS
 %configure \
 	--with-ssl=%{_prefix} \
 	--with-pem-dir=%{_datadir}/ssl/certs \
-	--with-cert-file=%{_datadir}/ssl/cert.pem
+	--with-cert-file=%{_datadir}/ssl/cert.pem \
+	--with-tcp-wrappers
 
 # We have to create a certificate before the makefile asks us to.
 rm -f stunnel.pem stunnel.pem.1 stunnel.pem.2
@@ -74,6 +72,23 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/stunnel
 
 %changelog
+* Mon Jul 30 2001 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.17
+
+* Mon Jul 23 2001 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.16
+
+* Mon Jul 16 2001 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.15
+- enable tcp-wrappers support
+
+* Tue May 29 2001 Nalin Dahyabhai <nalin@redhat.com>
+- remove explicit requirement on openssl (specific version isn't enough,
+  we have to depend on shared library version anyway)
+
+* Fri Apr 27 2001 Nalin Dahyabhai <nalin@redhat.com>
+- update to 3.14
+
 * Mon Mar 26 2001 Preston Brown <pbrown@redhat.com>
 - depend on make (#33148)
 
