@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.04
-Release: 4
+Release: 6
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -41,11 +41,13 @@ if pkg-config openssl ; then
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
 %configure --with-tcp-wrappers
-make
+export tagname=CC
+make LIBTOOL=/usr/bin/libtool
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall docdir=`pwd`/installed-docs
+export tagname=CC
+%makeinstall docdir=`pwd`/installed-docs LIBTOOL=/usr/bin/libtool
 touch $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/stunnel.pem
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
@@ -80,6 +82,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/%{name}
 
 %changelog
+* Thu Aug  7 2003 Elliot Lee <sopwith@redhat.com> 4.04-6
+- Fix libtool
+
+* Wed Jun 04 2003 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Fri Mar 21 2003 Nalin Dahyabhai <nalin@redhat.com> 4.04-4
 - fix xinetd configuration samples
 
