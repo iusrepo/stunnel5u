@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
-Version: 4.08
-Release: 2
+Version: 4.10
+Release: 1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -14,8 +14,8 @@ Source5: stunnel-sfinger.conf
 Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.08-authpriv.patch
-Patch1: stunnel-4.05-nopem.patch
-Patch2: stunnel-4.08-sample.patch
+Patch1: stunnel-4.08-sample.patch
+Patch2: stunnel-4.10-noprompt.patch
 Buildroot: %{_tmppath}/stunnel-root
 BuildPrereq: automake, autoconf, libtool, openssl-devel, perl, pkgconfig,
 # util-linux is needed for rename
@@ -32,8 +32,8 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %prep
 %setup -q
 %patch0 -p1 -b .authpriv
-%patch1 -p1 -b .nopem
-%patch2 -p1 -b .sample
+%patch1 -p1 -b .sample
+%patch2 -p1 -b .noprompt
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
@@ -60,6 +60,7 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/*.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.so.?
 rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/stunnel/*sample*
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/stunnel/stunnel.pem
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
 for lang in fr pl ; do
@@ -94,6 +95,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/%{name}
 
 %changelog
+* Tue Apr 26 2005 Nalin Dahyabhai <nalin@redhat.com> 4.10-1
+- update to 4.10
+
 * Tue Apr 26 2005 Nalin Dahyabhai <nalin@redhat.com> 4.08-2
 - add buildprereqs on libtool, util-linux; change textutils/fileutils dep to
   coreutils (#133961)
