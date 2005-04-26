@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.08
-Release: 1
+Release: 2
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -17,9 +17,10 @@ Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.05-nopem.patch
 Patch2: stunnel-4.08-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
-BuildPrereq: automake14, autoconf, openssl-devel, perl, pkgconfig,
-BuildPrereq: tcp_wrappers, /usr/share/dict/words
-Prereq: textutils, fileutils, /bin/mktemp, /sbin/ldconfig
+BuildPrereq: automake, autoconf, libtool, openssl-devel, perl, pkgconfig,
+# util-linux is needed for rename
+BuildPrereq: tcp_wrappers, /usr/share/dict/words, util-linux
+Prereq: coreutils, /bin/mktemp, /sbin/ldconfig
 Prereq: /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
 Requires: make
 
@@ -39,9 +40,7 @@ mv doc/stunnel.fr.8_ doc/stunnel.fr.8
 iconv -f iso-8859-2 -t utf-8 < doc/stunnel.pl.8 > doc/stunnel.pl.8_
 mv doc/stunnel.pl.8_ doc/stunnel.pl.8
 
-aclocal-1.4
-automake-1.4 -a
-autoconf
+autoreconf
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
@@ -95,6 +94,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/%{name}
 
 %changelog
+* Tue Apr 26 2005 Nalin Dahyabhai <nalin@redhat.com> 4.08-2
+- add buildprereqs on libtool, util-linux; change textutils/fileutils dep to
+  coreutils (#133961)
+
 * Wed Mar 16 2005 Nalin Dahyabhai <nalin@redhat.com> 4.08-1
 - update to 4.08
 - build stunnel as a PIE binary
