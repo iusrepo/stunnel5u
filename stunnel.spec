@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.10
-Release: 1
+Release: 2
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/ 
@@ -15,14 +15,10 @@ Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.08-sample.patch
-Patch2: stunnel-4.10-noprompt.patch
+Patch2: stunnel-4.10-inetd.patch
 Buildroot: %{_tmppath}/stunnel-root
-BuildPrereq: automake, autoconf, libtool, openssl-devel, perl, pkgconfig,
 # util-linux is needed for rename
-BuildPrereq: tcp_wrappers, /usr/share/dict/words, util-linux
-Prereq: coreutils, /bin/mktemp, /sbin/ldconfig
-Prereq: /usr/share/dict/words, /bin/hostname, /usr/bin/id, /usr/bin/getent
-Requires: make
+BuildRequires: openssl-devel, pkgconfig, tcp_wrappers, util-linux
 
 %description
 Stunnel is a socket wrapper which can provide SSL (Secure Sockets
@@ -33,14 +29,12 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
-%patch2 -p1 -b .noprompt
+%patch2 -p1 -b .inetd
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
 iconv -f iso-8859-2 -t utf-8 < doc/stunnel.pl.8 > doc/stunnel.pl.8_
 mv doc/stunnel.pl.8_ doc/stunnel.pl.8
-
-autoreconf
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
@@ -48,19 +42,14 @@ if pkg-config openssl ; then
 	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
-%configure --with-tcp-wrappers --with-pic
-export tagname=CC
-make LIBTOOL=%{_bindir}/libtool LDADD="-pie -Wl,-z,defs,-z,relro"
+%configure --with-tcp-wrappers
+make LDADD="-pie -Wl,-z,defs,-z,relro"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-export tagname=CC
-%makeinstall docdir=`pwd`/installed-docs LIBTOOL=%{_bindir}/libtool
-rm -f $RPM_BUILD_ROOT/%{_libdir}/*.a
-rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
-rm -f $RPM_BUILD_ROOT/%{_libdir}/*.so.?
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/stunnel/*sample*
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/stunnel/stunnel.pem
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/stunnel
+touch $RPM_BUILD_ROOT%{_sysconfdir}/stunnel/stunnel.pem
+make install DESTDIR=$RPM_BUILD_ROOT
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
 for lang in fr pl ; do
@@ -78,7 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO doc/*.html
+%doc AUTHORS BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO doc/*.html
 %doc $RPM_SOURCE_DIR/Certificate-Creation
 %doc $RPM_SOURCE_DIR/sfinger.xinetd
 %doc $RPM_SOURCE_DIR/pop3-redirect.xinetd
@@ -87,14 +76,22 @@ rm -rf $RPM_BUILD_ROOT
 %doc tools/stunnel.conf-sample
 %lang(en) %doc doc/en/*
 %lang(po) %doc doc/pl/*
+%exclude %{_datadir}/doc/stunnel
 %{_libdir}/libstunnel.so
+%exclude %{_libdir}/libstunnel.la
 %{_mandir}/man8/stunnel.8*
 %{_mandir}/*/man8/stunnel.8*
 %{_sbindir}/stunnel
 %{_sbindir}/stunnel3
 %dir %{_sysconfdir}/%{name}
+%exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Wed Jun  1 2005 Miloslav Trmac <mitr@redhat.com> - 4.10-2
+- Fix inetd mode
+- Remove unnecessary Requires: and BuildRequires:
+- Clean up the spec file
+
 * Tue Apr 26 2005 Nalin Dahyabhai <nalin@redhat.com> 4.10-1
 - update to 4.10
 
