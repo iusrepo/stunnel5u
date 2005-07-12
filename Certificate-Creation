@@ -1,6 +1,6 @@
 To generate a key and self signed certificate, execute the following commands:
 
-cd /usr/share/ssl/certs
+cd /etc/pki/tls/certs
 make stunnel.pem
 
 Note that by default, the file containing the key and certificate has its
