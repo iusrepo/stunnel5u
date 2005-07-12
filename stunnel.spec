@@ -15,6 +15,7 @@ Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.08-sample.patch
+Patch2: stunnel-4.11-printf.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers, util-linux
@@ -28,6 +29,7 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
+%patch2 -p1 -b .printf
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
@@ -87,6 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Jul 12 2005 Miloslav Trmac <mitr@redhat.com> - 4.11-1
 - Update to stunnel-4.11
+- Fix int/size_t mismatches in stack_info ()
 - Update Certificate-Creation for /etc/pki
 
 * Wed Jun  1 2005 Miloslav Trmac <mitr@redhat.com> - 4.10-2
