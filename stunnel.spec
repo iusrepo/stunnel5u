@@ -4,7 +4,7 @@ Version: 4.11
 Release: 1
 License: GPL
 Group: Applications/Internet
-URL: http://stunnel.mirt.net/ 
+URL: http://stunnel.mirt.net/
 Source0: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz
 Source1: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz.asc
 Source2: stunnel.cnf
@@ -67,7 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO doc/*.html
+%doc AUTHORS BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO
 %doc $RPM_SOURCE_DIR/Certificate-Creation
 %doc $RPM_SOURCE_DIR/sfinger.xinetd
 %doc $RPM_SOURCE_DIR/pop3-redirect.xinetd
@@ -87,6 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+- Don't ship another copy of man pages in HTML
+
 * Tue Jul 12 2005 Miloslav Trmac <mitr@redhat.com> - 4.11-1
 - Update to stunnel-4.11
 - Fix int/size_t mismatches in stack_info ()
