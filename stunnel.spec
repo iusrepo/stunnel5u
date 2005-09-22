@@ -87,8 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
-* Thu Sep 22 2005 Miloslav Trmac <mitr@volny.cz> - 4.11-2
-- Enable IPv6 (#169050)
+* Thu Sep 22 2005 Miloslav Trmac <mitr@redhat.com> - 4.11-2
+- Enable IPv6 (#169050, patch by Peter Bieringer)
 - Don't ship another copy of man pages in HTML
 
 * Tue Jul 12 2005 Miloslav Trmac <mitr@redhat.com> - 4.11-1
