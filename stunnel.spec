@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.12
-Release: 0.testcompile
+Release: 1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -15,7 +15,7 @@ Source6: pop3-redirect.xinetd
 Source7: stunnel-pop3s-client.conf
 Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.12-sample.patch
-Patch2: stunnel-4.11-printf.patch
+Patch2: stunnel-4.12-printf.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers, util-linux
@@ -29,7 +29,7 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
-#patch2 -p1 -b .printf
+%patch2 -p1 -b .printf
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
