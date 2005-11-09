@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.14
-Release: 1
+Release: 2
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -91,6 +91,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Wed Nov  9 2005 Miloslav Trmac <mitr@redhat.com> - 4.14-2
+- Rebuild with newer openssl
+
 * Thu Nov  3 2005 Miloslav Trmac <mitr@redhat.com> - 4.14-1
 - Update to stunnel-4.14
 - Override changed default pid file location, keep it in %{_localstatedir}/run
