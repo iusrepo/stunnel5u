@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.14
-Release: 2.1
+Release: 3
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -45,7 +45,7 @@ if pkg-config openssl ; then
 	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
-%configure --enable-ipv6 \
+%configure --enable-ipv6 --with-threads=pthread \
 	CPPFLAGS="-UPIDFILE -DPIDFILE='\"%{_localstatedir}/run/stunnel.pid\"'"
 make LDADD="-pie -Wl,-z,defs,-z,relro"
 
@@ -91,6 +91,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Tue Jan 31 2006 Miloslav Trmac <mitr@redhat.com> - 4.14-3
+- Use pthread threading to fix crash on x86_64 (#179236)
+
 * Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com>
 - rebuilt
 
