@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.14
-Release: 3
+Release: 3.1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -91,6 +91,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 4.14-3.1
+- rebuilt for new gcc4.1 snapshot and glibc changes
+
 * Tue Jan 31 2006 Miloslav Trmac <mitr@redhat.com> - 4.14-3
 - Use pthread threading to fix crash on x86_64 (#179236)
 
