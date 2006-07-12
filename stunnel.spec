@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper.
 Name: stunnel
 Version: 4.15
-Release: 1
+Release: 1.1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -91,6 +91,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 4.15-1.1
+- rebuild
+
 * Sat Mar 18 2006 Miloslav Trmac <mitr@redhat.com> - 4.15-1
 - Update to stunnel-4.15
 
