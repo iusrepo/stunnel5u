@@ -1,26 +1,22 @@
-Summary: An SSL-encrypting socket wrapper.
+Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.15
-Release: 2
+Version: 4.18
+Release: 1
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
 Source0: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz
 Source1: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz.asc
-Source2: stunnel.cnf
-Source3: Certificate-Creation
-Source4: sfinger.xinetd
-Source5: stunnel-sfinger.conf
-Source6: pop3-redirect.xinetd
-Source7: stunnel-pop3s-client.conf
+Source2: Certificate-Creation
+Source3: sfinger.xinetd
+Source4: stunnel-sfinger.conf
+Source5: pop3-redirect.xinetd
+Source6: stunnel-pop3s-client.conf
 Patch0: stunnel-4.08-authpriv.patch
-Patch1: stunnel-4.15-sample.patch
-Patch2: stunnel-4.15-nogroup.patch
+Patch1: stunnel-4.18-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers, util-linux
-# For stunnel-4.15-nogroup.patch
-BuildRequires: autoconf, automake, libtool
 
 %description
 Stunnel is a socket wrapper which can provide SSL (Secure Sockets
@@ -31,7 +27,6 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
-%patch2 -p1 -b .nogroup
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
@@ -39,7 +34,6 @@ iconv -f iso-8859-2 -t utf-8 < doc/stunnel.pl.8 > doc/stunnel.pl.8_
 mv doc/stunnel.pl.8_ doc/stunnel.pl.8
 
 %build
-autoreconf -f # For stunnel-4.15-nogroup.patch
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
 if pkg-config openssl ; then
 	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
@@ -62,6 +56,9 @@ for lang in fr pl ; do
 	rename ".${lang}" "" $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/*
 done
 
+mkdir srpm-docs
+cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
+
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -72,12 +69,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc AUTHORS BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO
-%doc $RPM_SOURCE_DIR/Certificate-Creation
-%doc $RPM_SOURCE_DIR/sfinger.xinetd
-%doc $RPM_SOURCE_DIR/pop3-redirect.xinetd
-%doc $RPM_SOURCE_DIR/stunnel-pop3s-client.conf
-%doc $RPM_SOURCE_DIR/stunnel-sfinger.conf
 %doc tools/stunnel.conf-sample
+%doc srpm-docs/*
 %lang(en) %doc doc/en/*
 %lang(po) %doc doc/pl/*
 %exclude %{_datadir}/doc/stunnel
@@ -91,6 +84,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Wed Oct 25 2006 Miloslav Trmac <mitr@redhat.com> - 4.18-1
+- Update to stunnel-4.18
+- Remove unused stunnel.cnf from the src.rpm
+- Fix some rpmlint warnings
+
 * Fri Aug 18 2006 Jesse Keating <jkeating@redhat.com> - 4.15-2
 - rebuilt with latest binutils to pick up 64K -z commonpagesize on ppc*
   (#203001)
@@ -118,7 +116,7 @@ rm -rf $RPM_BUILD_ROOT
 
 * Thu Nov  3 2005 Miloslav Trmac <mitr@redhat.com> - 4.14-1
 - Update to stunnel-4.14
-- Override changed default pid file location, keep it in %{_localstatedir}/run
+- Override changed default pid file location, keep it in %%{_localstatedir}/run
 
 * Sat Oct 22 2005 Miloslav Trmac <mitr@redhat.com> - 4.13-1
 - Update to stunnel-4.13
@@ -282,8 +280,8 @@ rm -rf $RPM_BUILD_ROOT
 
 * Thu Jun 29 2000 Nalin Dahyabhai <nalin@redhat.com>
 - move to Applications/Internet group
-- clean up %post script
-- make stunnel.pem %ghost %config(noreplace)
+- clean up %%post script
+- make stunnel.pem %%ghost %%config(noreplace)
 - provide a sample file for use with xinetd
 
 * Thu Jun  8 2000 Nalin Dahyabhai <nalin@redhat.com>

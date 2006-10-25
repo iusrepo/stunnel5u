@@ -1,0 +1,38 @@
+You shouldn't use the sample as-is, but people do.
+
+--- stunnel-4.18/tools/stunnel.conf-sample.in.sample	2006-08-31 21:02:30.000000000 +0200
++++ stunnel-4.18/tools/stunnel.conf-sample.in	2006-10-25 02:20:02.000000000 +0200
+@@ -3,14 +3,14 @@
+ ; Please make sure you understand them (especially the effect of chroot jail)
+ 
+ ; Certificate/key is needed in server mode and optional in client mode
+-cert = @prefix@/etc/stunnel/mail.pem
+-;key = @prefix@/etc/stunnel/mail.pem
++cert = @sysconfdir@/stunnel/mail.crt
++;key = @sysconfdir@/stunnel/mail.key
+ 
+ ; Protocol version (all, SSLv2, SSLv3, TLSv1)
+ sslVersion = SSLv3
+ 
+ ; Some security enhancements for UNIX systems - comment them out on Win32
+-chroot = @prefix@/var/lib/stunnel/
++chroot = @localstatedir@/run/stunnel/
+ setuid = nobody
+ setgid = @DEFAULT_GROUP@
+ ; PID is created inside chroot jail
+@@ -30,12 +30,13 @@
+ ; CApath is located inside chroot jail
+ ;CApath = /certs
+ ; It's often easier to use CAfile
+-;CAfile = @prefix@/etc/stunnel/certs.pem
++;CAfile = @sysconfdir@/stunnel/certs.pem
++;CAfile = @datadir@/ssl/certs/ca-bundle.crt
+ ; Don't forget to c_rehash CRLpath
+ ; CRLpath is located inside chroot jail
+ ;CRLpath = /crls
+ ; Alternatively you can use CRLfile
+-;CRLfile = @prefix@/etc/stunnel/crls.pem
++;CRLfile = @sysconfdir@/stunnel/crls.pem
+ 
+ ; Some debugging stuff useful for troubleshooting
+ ;debug = 7
