@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.20
-Release: 1
+Release: 2
 License: GPL
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -16,7 +16,7 @@ Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.18-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
-BuildRequires: openssl-devel, pkgconfig, tcp_wrappers, util-linux
+BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 
 %description
 Stunnel is a socket wrapper which can provide SSL (Secure Sockets
@@ -84,6 +84,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Dec  4 2006 Miloslav Trmac <mitr@redhat.com> - 4.20-2
+- Update BuildRequires for the separate tcp_wrappers-devel package
+
 * Thu Nov 30 2006 Miloslav Trmac <mitr@redhat.com> - 4.20-1
 - Update to stunnel-4.20
 
