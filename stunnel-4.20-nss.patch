@@ -1,0 +1,909 @@
+--- stunnel-4.20/doc/stunnel.8.nss	2007-08-28 16:29:18.000000000 +0200
++++ stunnel-4.20/doc/stunnel.8	2007-08-28 16:42:23.000000000 +0200
+@@ -156,6 +156,16 @@ changes to the source code.
+ .PP
+ This product includes cryptographic software written by
+ Eric Young (eay@cryptsoft.com)
++
++.SH NOTE
++This version of stunnel was modified to use NSS.
++Some options that configured in stunnel are now configured in the NSS database.
++Please see
++.B README.NSS
++in the package documentation for more information.
++Please report bugs at \fBbugzilla.redhat.com\fR,
++not at the upstream bug tracking system.
++
+ .SH "OPTIONS"
+ .IX Header "OPTIONS"
+ .IP "<\fBfilename\fR>" 4
+@@ -212,11 +222,6 @@ to the directory specified with \fBchroo
+ To have libwrap (\s-1TCP\s0 Wrappers) control effective in a chrooted environment
+ you also have to copy its configuration files (/etc/hosts.allow and
+ /etc/hosts.deny) there.
+-.IP "\fBcompression\fR = zlib | rle" 4
+-.IX Item "compression = zlib | rle"
+-select data compression algorithm
+-.Sp
+-default: no compression
+ .IP "\fBdebug\fR = [facility.]level" 4
+ .IX Item "debug = [facility.]level"
+ debugging level
+@@ -231,25 +236,6 @@ The syslog facility 'authpriv' will be u
+ (Facilities are not supported on Win32.)
+ .Sp
+ Case is ignored for both facilities and levels.
+-.IP "\fB\s-1EGD\s0\fR = egd path (Unix only)" 4
+-.IX Item "EGD = egd path (Unix only)"
+-path to Entropy Gathering Daemon socket
+-.Sp
+-Entropy Gathering Daemon socket to use to feed OpenSSL random number
+-generator.  (Available only if compiled with OpenSSL 0.9.5a or higher)
+-.IP "\fBengine\fR = auto | <engine id>" 4
+-.IX Item "engine = auto | <engine id>"
+-select hardware engine
+-.Sp
+-default: software-only cryptography
+-.Sp
+-There's an example in '\s-1EXAMPLES\s0' section.
+-.IP "\fBengineCtrl\fR = command[:parameter]" 4
+-.IX Item "engineCtrl = command[:parameter]"
+-control hardware engine
+-.Sp
+-Special commands \*(L"\s-1LOAD\s0\*(R" and \*(L"\s-1INIT\s0\*(R" can be used to load and initialize the
+-engine cryptogaphic module.
+ .IP "\fBforeground\fR = yes | no (Unix only)" 4
+ .IX Item "foreground = yes | no (Unix only)"
+ foreground mode
+@@ -351,26 +337,18 @@ If no host specified, defaults to all \s
+ .IX Item "CApath = directory"
+ Certificate Authority directory
+ .Sp
+-This is the directory in which \fBstunnel\fR will look for certificates when using
+-the \fIverify\fR. Note that the certificates in this directory should be named
+-\&\s-1XXXXXXXX\s0.0 where \s-1XXXXXXXX\s0 is the hash value of the \s-1DER\s0 encoded subject of the
+-cert (the first 4 bytes of the \s-1MD5\s0 hash in least significant byte order).
+-.Sp
+-\&\fICApath\fR path is relative to \fIchroot\fR directory if specified.
+-.IP "\fBCAfile\fR = certfile" 4
+-.IX Item "CAfile = certfile"
+-Certificate Authority file
+-.Sp
+-This file contains multiple \s-1CA\s0 certificates, used with the \fIverify\fR.
+-.IP "\fBcert\fR = pemfile" 4
+-.IX Item "cert = pemfile"
+-certificate chain \s-1PEM\s0 file name
+-.Sp
+-A \s-1PEM\s0 is always needed in server mode.
+-Specifying this flag in client mode will use this certificate chain
+-as a client side certificate chain.  Using client side certs is optional.
+-The certificates must be in \s-1PEM\s0 format and must be sorted starting with the
+-certificate to the highest level (root \s-1CA\s0).
++This option is currently ignored.
++Store CA certificates in the NSS database instead.
++.IP "\fBCAfile\fR = certnick" 4
++.IX Item "CAfile = certnick"
++Certificate Authority certificate nickname.
++Store CA certificates in the NSS database instead.
++.IX Item "cert = certnick"
++certificate nickname in the NSS database
++.Sp
++A certificate is always needed in server mode.
++Specifying this flag in client mode will use this certificate
++as a client side certificate.  Using client side certs is optional.
+ .IP "\fBciphers\fR = cipherlist" 4
+ .IX Item "ciphers = cipherlist"
+ Select permitted \s-1SSL\s0 ciphers
+@@ -387,28 +365,9 @@ default: no (server mode)
+ connect to remote host:port
+ .Sp
+ If no host specified, defaults to localhost.
+-.IP "\fBCRLpath\fR = directory" 4
+-.IX Item "CRLpath = directory"
+-Certificate Revocation Lists directory
+-.Sp
+-This is the directory in which \fBstunnel\fR will look for CRLs when
+-using the \fIverify\fR. Note that the CRLs in this directory should
+-be named \s-1XXXXXXXX\s0.0 where \s-1XXXXXXXX\s0 is the hash value of the \s-1CRL\s0.
+-.Sp
+-\&\fICRLpath\fR path is relative to \fIchroot\fR directory if specified.
+-.IP "\fBCRLfile\fR = certfile" 4
+-.IX Item "CRLfile = certfile"
+-Certificate Revocation Lists file
+-.Sp
+-This file contains multiple CRLs, used with the \fIverify\fR.
+ .IP "\fBdelay\fR = yes | no" 4
+ .IX Item "delay = yes | no"
+ delay \s-1DNS\s0 lookup for 'connect' option
+-.IP "\fBengineNum\fR = engine number" 4
+-.IX Item "engineNum = engine number"
+-select engine number to read private key
+-.Sp
+-The engines are numbered starting from 1.
+ .IP "\fBexec\fR = executable_path (Unix only)" 4
+ .IX Item "exec = executable_path (Unix only)"
+ execute local inetd-type program 
+@@ -426,51 +385,18 @@ Arguments are separated with arbitrary n
+ use \s-1IDENT\s0 (\s-1RFC\s0 1413) username checking
+ .IP "\fBkey\fR = keyfile" 4
+ .IX Item "key = keyfile"
+-private key for certificate specified with \fIcert\fR option
+-.Sp
+-Private key is needed to authenticate certificate owner.
+-Since this file should be kept secret it should only be readable
+-to its owner.  On Unix systems you can use the following command:
+-.Sp
+-.Vb 1
+-\&    chmod 600 keyfile
+-.Ve
+-.Sp
+-default: value of \fIcert\fR option
++private key for certificate specified with \fIcert\fR option.
++This option is currently ignored.
++Store private keys in the NSS database instead.
+ .IP "\fBlocal\fR = host" 4
+ .IX Item "local = host"
+ \&\s-1IP\s0 of the outgoing interface is used as source for remote connections.
+ Use this option to bind a static local \s-1IP\s0 address, instead.
+-.IP "\fB\s-1OCSP\s0\fR = url" 4
+-.IX Item "OCSP = url"
+-select \s-1OCSP\s0 server for certificate verification
+-.IP "\fBOCSPflag\fR = flag" 4
+-.IX Item "OCSPflag = flag"
+-specify \s-1OCSP\s0 server flag
+-.Sp
+-Several \fIOCSPflag\fR can be used to specify multiple flags.
+-.Sp
+-currently supported flags: \s-1NOCERTS\s0, \s-1NOINTERN\s0 \s-1NOSIGS\s0, \s-1NOCHAIN\s0, \s-1NOVERIFY\s0,
+-\&\s-1NOEXPLICIT\s0, \s-1NOCASIGN\s0, \s-1NODELEGATED\s0, \s-1NOCHECKS\s0, \s-1TRUSTOTHER\s0, \s-1RESPID_KEY\s0, \s-1NOTIME\s0
+-.IP "\fBoptions\fR = SSL_options" 4
+-.IX Item "options = SSL_options"
+-OpenSSL library options
+-.Sp
+-The parameter is the OpenSSL option name as described in the
+-\&\fI\fISSL_CTX_set_options\fI\|(3ssl)\fR manual, but without \fI\s-1SSL_OP_\s0\fR prefix.
+-Several \fIoptions\fR can be used to specify multiple options.
+-.Sp
+-For example for compatibility with erroneous Eudora \s-1SSL\s0 implementation
+-the following option can be used:
+-.Sp
+-.Vb 1
+-\&    options = DONT_INSERT_EMPTY_FRAGMENTS
+-.Ve
+ .IP "\fBprotocol\fR = proto" 4
+ .IX Item "protocol = proto"
+ application protocol to negotiate \s-1SSL\s0
+ .Sp
+-currently supported: cifs, connect, imap, nntp, pop3, smtp
++currently supported: cifs, imap, nntp, pop3, smtp
+ .IP "\fBprotocolAuthentication\fR = auth_type" 4
+ .IX Item "protocolAuthentication = auth_type"
+ authentication type for protocol negotiations
+--- stunnel-4.20/configure.ac.nss	2006-11-11 15:58:01.000000000 +0100
++++ stunnel-4.20/configure.ac	2007-08-28 16:06:24.000000000 +0200
+@@ -48,12 +48,24 @@ AC_MSG_NOTICE([*************************
+ AC_CHECK_FILE("/dev/ptmx", AC_DEFINE(HAVE_DEV_PTMX))
+ AC_CHECK_FILE("/dev/ptc", AC_DEFINE(HAVE_DEV_PTS_AND_PTC))
+ 
++# Crypto implementation
++AC_ARG_WITH([nss],
++    [  --with-nss              Use nss_compat_ossl instead of OpenSSL],
++    [], [with_nss=no])
++if test "x$with_nss" != xno
++then AC_DEFINE([WITH_NSS], [1], [Define to 1 if you are using nss_compat_ossl])
++    PKG_CHECK_MODULES([NSS], [nss])
++    LIBS="$LIBS -lnss_compat_ossl"
++fi
++
+ AC_MSG_NOTICE([**************************************** entropy])
+ 
+-AC_ARG_WITH(egd-socket,
+-    [  --with-egd-socket=FILE  Entropy Gathering Daemon socket pathname],
+-    [EGD_SOCKET="$withval"]
+-)
++if test "x$with_nss" = xno
++then AC_ARG_WITH(egd-socket,
++	[  --with-egd-socket=FILE  Entropy Gathering Daemon socket pathname],
++	[EGD_SOCKET="$withval"]
++    )
++fi
+ if test -n "$EGD_SOCKET"
+ then AC_DEFINE_UNQUOTED(EGD_SOCKET, "$EGD_SOCKET")
+ fi
+@@ -227,69 +239,79 @@ checkssldir() { :
+     return 1
+ }
+ 
+-# Check for SSL directory
+-AC_MSG_CHECKING([for SSL directory])
+-AC_ARG_WITH(ssl,
+-[  --with-ssl=DIR          location of installed SSL libraries/include files],
+-    [
+-        # Check the specified localtion only
+-        checkssldir "$withval"
+-    ],
+-    [
+-        # Search default localtions of SSL library
+-        for maindir in /usr/local /usr/lib /usr/pkg /usr /var/ssl /opt; do
+-            for dir in $maindir $maindir/openssl $maindir/ssl; do
+-                checkssldir $dir && break 2
+-            done
+-        done
+-    ]
+-)
+-if test -z "$ssldir"
+-then AC_MSG_RESULT([Not found])
+-    echo
+-    echo "Couldn't find your SSL library installation dir"
+-    echo "Use --with-ssl option to fix this problem"
+-    echo
+-    exit 1
+-fi
+-AC_MSG_RESULT([$ssldir])
+-AC_SUBST(ssldir)
+-AC_DEFINE_UNQUOTED(ssldir, "$ssldir")
+-
+-# Add SSL includes and libraries
+-CFLAGS="$CFLAGS -I$ssldir/include"
+-LIBS="$LIBS -L$ssldir/lib -lssl -lcrypto"
+-
+-# Check for obsolete RSAref library
+-AC_MSG_CHECKING([for obsolete RSAref library])
+-saved_LIBS="$LIBS"
+-LIBS="$saved_LIBS -lRSAglue -L$prefix/lib -lrsaref"
+-AC_LINK_IFELSE(
+-    [AC_LANG_PROGRAM([[]], [[]])],
+-    [AC_MSG_RESULT([yes])],
+-    [AC_MSG_RESULT([no]); LIBS="$saved_LIBS"]
+-)
++if test "x$with_nss" = "xno"
++then
++    # Check for SSL directory
++    AC_MSG_CHECKING([for SSL directory])
++    AC_ARG_WITH(ssl,
++    [  --with-ssl=DIR          location of installed SSL libraries/include files],
++	[
++	    # Check the specified localtion only
++	    checkssldir "$withval"
++	],
++	[
++	    # Search default localtions of SSL library
++	    for maindir in /usr/local /usr/lib /usr/pkg /usr /var/ssl /opt; do
++		for dir in $maindir $maindir/openssl $maindir/ssl; do
++		    checkssldir $dir && break 2
++		done
++	    done
++	]
++    )
++    if test -z "$ssldir"
++    then AC_MSG_RESULT([Not found])
++	echo
++	echo "Couldn't find your SSL library installation dir"
++	echo "Use --with-ssl option to fix this problem"
++	echo
++	exit 1
++    fi
++    AC_MSG_RESULT([$ssldir])
++    AC_SUBST(ssldir)
++    AC_DEFINE_UNQUOTED(ssldir, "$ssldir")
++
++    # Add SSL includes and libraries
++    CFLAGS="$CFLAGS -I$ssldir/include"
++    LIBS="$LIBS -L$ssldir/lib -lssl -lcrypto"
+ 
+-AC_CHECK_HEADER([$ssldir/include/openssl/engine.h],
+-    [AC_DEFINE([HAVE_OSSL_ENGINE_H])],
+-    [AC_MSG_WARN([Openssl engine header not found])])
++    # Check for obsolete RSAref library
++    AC_MSG_CHECKING([for obsolete RSAref library])
++    saved_LIBS="$LIBS"
++    LIBS="$saved_LIBS -lRSAglue -L$prefix/lib -lrsaref"
++    AC_LINK_IFELSE(
++	[AC_LANG_PROGRAM([[]], [[]])],
++	[AC_MSG_RESULT([yes])],
++	[AC_MSG_RESULT([no]); LIBS="$saved_LIBS"]
++    )
++
++    AC_CHECK_HEADER([$ssldir/include/openssl/engine.h],
++	[AC_DEFINE([HAVE_OSSL_ENGINE_H])],
++	[AC_MSG_WARN([Openssl engine header not found])])
++fi
+ 
+ AC_MSG_NOTICE([**************************************** optional features])
+ # Use RSA?
+-AC_MSG_CHECKING([whether to disable RSA support])
+-AC_ARG_ENABLE(rsa,
+-[  --disable-rsa           Disable RSA support],
+-    [AC_MSG_RESULT([yes]); AC_DEFINE(NO_RSA)],
+-    [AC_MSG_RESULT([no])]
+-)
++if test "x$with_nss" != xno
++then AC_DEFINE([NO_RSA])
++else
++    AC_MSG_CHECKING([whether to disable RSA support])
++    AC_ARG_ENABLE(rsa,
++    [  --disable-rsa           Disable RSA support],
++	[AC_MSG_RESULT([yes]); AC_DEFINE(NO_RSA)],
++	[AC_MSG_RESULT([no])]
++    )
++fi
+ 
+ # Use DH?
+-AC_MSG_CHECKING([whether to enable DH support])
+-AC_ARG_ENABLE(dh,
+-[  --enable-dh             Enable DH support],
+-    [AC_MSG_RESULT([yes]); USE_DH=1; AC_DEFINE(USE_DH)],
+-    [AC_MSG_RESULT([no])]
+-)
++if test "x$with_nss" = xno
++then
++    AC_MSG_CHECKING([whether to enable DH support])
++    AC_ARG_ENABLE(dh,
++    [  --enable-dh             Enable DH support],
++	[AC_MSG_RESULT([yes]); USE_DH=1; AC_DEFINE(USE_DH)],
++	[AC_MSG_RESULT([no])]
++    )
++fi
+ AC_SUBST(USE_DH)
+ 
+ # Use IPv6?
+--- stunnel-4.20/src/options.c.nss	2007-08-28 16:06:24.000000000 +0200
++++ stunnel-4.20/src/options.c	2007-08-28 16:06:24.000000000 +0200
+@@ -51,12 +51,16 @@ static char **argalloc(char *);
+ #endif
+ 
+ static int parse_debug_level(char *);
++#ifndef WITH_NSS
+ static int parse_ssl_option(char *);
++#endif
+ static int print_socket_options(void);
+ static void print_option(char *, int, OPT_UNION *);
+ static int parse_socket_option(char *);
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x00907000L
+ static char *parse_ocsp_url(LOCAL_OPTIONS *, char *);
+ static unsigned long parse_ocsp_flag(char *);
++#endif /* !WITH_NSS && OpenSSL-0.9.7 */
+ 
+ GLOBAL_OPTIONS options;
+ LOCAL_OPTIONS local_options;
+@@ -72,8 +76,6 @@ static char *option_not_found=
+     "Specified option name is not valid here";
+ 
+ static char *global_options(CMD cmd, char *opt, char *arg) {
+-    char *tmpstr;
+-
+     if(cmd==CMD_DEFAULT || cmd==CMD_HELP) {
+         log_raw("Global options");
+     }
+@@ -98,6 +100,7 @@ static char *global_options(CMD cmd, cha
+ #endif /* HAVE_CHROOT */
+ 
+     /* compression */
++#ifndef WITH_NSS
+     switch(cmd) {
+     case CMD_INIT:
+         options.compression=COMP_NONE;
+@@ -119,6 +122,7 @@ static char *global_options(CMD cmd, cha
+             "compression");
+         break;
+     }
++#endif
+ 
+     /* debug */
+     switch(cmd) {
+@@ -147,7 +151,7 @@ static char *global_options(CMD cmd, cha
+     }
+ 
+     /* EGD is only supported when compiled with OpenSSL 0.9.5a or later */
+-#if SSLEAY_VERSION_NUMBER >= 0x0090581fL
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x0090581fL
+     switch(cmd) {
+     case CMD_INIT:
+         options.egd_sock=NULL;
+@@ -166,7 +170,7 @@ static char *global_options(CMD cmd, cha
+         log_raw("%-15s = path to Entropy Gathering Daemon socket", "EGD");
+         break;
+     }
+-#endif /* OpenSSL 0.9.5a */
++#endif /* !WITH_NSS && OpenSSL 0.9.5a */
+ 
+ #ifdef HAVE_OSSL_ENGINE_H
+     /* engine */
+@@ -188,6 +192,8 @@ static char *global_options(CMD cmd, cha
+ 
+     /* engineCtrl */
+     switch(cmd) {
++        char *tmpstr;
++
+     case CMD_INIT:
+         break;
+     case CMD_EXEC:
+@@ -449,8 +455,6 @@ static char *global_options(CMD cmd, cha
+ 
+ static char *service_options(CMD cmd, LOCAL_OPTIONS *section,
+         char *opt, char *arg) {
+-    int tmpnum;
+-
+     if(cmd==CMD_DEFAULT || cmd==CMD_HELP) {
+         log_raw(" ");
+         log_raw("Service-level options");
+@@ -624,6 +628,7 @@ static char *service_options(CMD cmd, LO
+         break;
+     }
+ 
++#ifndef WITH_NSS
+     /* CRLpath */
+     switch(cmd) {
+     case CMD_INIT:
+@@ -663,6 +668,7 @@ static char *service_options(CMD cmd, LO
+         log_raw("%-15s = CRL file", "CRLfile");
+         break;
+     }
++#endif
+ 
+     /* delay */
+     switch(cmd) {
+@@ -805,7 +811,7 @@ static char *service_options(CMD cmd, LO
+         break;
+     }
+ 
+-#if SSLEAY_VERSION_NUMBER >= 0x00907000L
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x00907000L
+     /* OCSP */
+     switch(cmd) {
+     case CMD_INIT:
+@@ -830,7 +836,9 @@ static char *service_options(CMD cmd, LO
+     case CMD_INIT:
+         section->ocsp_flags=0;
+         break;
+-    case CMD_EXEC:
++    case CMD_EXEC: {
++	int tmpnum;
++
+         if(strcasecmp(opt, "OCSPflag"))
+             break;
+         tmpnum=parse_ocsp_flag(arg);
+@@ -838,20 +846,24 @@ static char *service_options(CMD cmd, LO
+             return "Illegal OCSP flag";
+         section->ocsp_flags|=tmpnum;
+         return NULL;
++    }
+     case CMD_DEFAULT:
+         break;
+     case CMD_HELP:
+         log_raw("%-15s = OCSP server flags", "OCSPflag");
+         break;
+     }
+-#endif /* OpenSSL-0.9.7 */
++#endif /* !WITH_NSS && OpenSSL-0.9.7 */
+ 
+     /* options */
++#ifndef WITH_NSS
+     switch(cmd) {
+     case CMD_INIT:
+         section->ssl_options=0;
+         break;
+-    case CMD_EXEC:
++    case CMD_EXEC: {
++	int tmpnum;
++
+         if(strcasecmp(opt, "options"))
+             break;
+         tmpnum=parse_ssl_option(arg);
+@@ -859,6 +871,7 @@ static char *service_options(CMD cmd, LO
+             return "Illegal SSL option";
+         section->ssl_options|=tmpnum;
+         return NULL; /* OK */
++    }
+     case CMD_DEFAULT:
+         break;
+     case CMD_HELP:
+@@ -866,6 +879,7 @@ static char *service_options(CMD cmd, LO
+         log_raw("%18sset an SSL option", "");
+         break;
+     }
++#endif
+ 
+     /* protocol */
+     switch(cmd) {
+@@ -1537,6 +1551,7 @@ static int parse_debug_level(char *arg) 
+     return 1; /* OK */
+ }
+ 
++#ifndef WITH_NSS
+ /* Parse out SSL options stuff */
+ 
+ static int parse_ssl_option(char *arg) {
+@@ -1580,6 +1595,7 @@ static int parse_ssl_option(char *arg) {
+             return option->value;
+     return 0; /* FAILED */
+ }
++#endif /* !WITH_NSS */
+ 
+ /* Parse out the socket options stuff */
+ 
+@@ -1757,6 +1773,8 @@ static int parse_socket_option(char *arg
+     return 0; /* FAILED */
+ }
+ 
++
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x00907000L
+ /* Parse out OCSP URL */
+ 
+ static char *parse_ocsp_url(LOCAL_OPTIONS *section, char *arg) {
+@@ -1807,5 +1825,6 @@ static unsigned long parse_ocsp_flag(cha
+             return option->value;
+     return 0; /* FAILED */
+ }
++#endif /* !WITH_NSS && OpenSSL-0.9.7 */
+ 
+ /* End of options.c */
+--- stunnel-4.20/src/ssl.c.nss	2006-11-05 14:04:58.000000000 +0100
++++ stunnel-4.20/src/ssl.c	2007-08-28 16:06:24.000000000 +0200
+@@ -32,7 +32,9 @@
+ #include "prototypes.h"
+ 
+     /* Global OpenSSL initalization: compression, engine, entropy */
++#ifndef WITH_NSS
+ static void init_compression(void);
++#endif
+ static int init_prng(void);
+ static int prng_seeded(int);
+ static int add_rand_file(char *);
+@@ -55,12 +57,15 @@ void ssl_init(void) { /* init SSL before
+ }
+ 
+ void ssl_configure(void) { /* configure global SSL settings */
++#ifndef WITH_NSS
+     if(options.compression!=COMP_NONE)
+         init_compression();
++#endif
+     if(!init_prng())
+         s_log(LOG_DEBUG, "PRNG seeded successfully");
+ }
+ 
++#ifndef WITH_NSS
+ static void init_compression(void) {
+     int id=0;
+     COMP_METHOD *cm=NULL;
+@@ -91,6 +96,7 @@ static void init_compression(void) {
+     }
+     s_log(LOG_INFO, "Compression enabled using %s method", name);
+ }
++#endif
+ 
+ static int init_prng(void) {
+     int totbytes=0;
+@@ -133,7 +139,7 @@ static int init_prng(void) {
+     s_log(LOG_DEBUG, "RAND_screen failed to sufficiently seed PRNG");
+ #else
+ 
+-#if SSLEAY_VERSION_NUMBER>=0x0090581fL
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER>=0x0090581fL
+     if(options.egd_sock) {
+         if((bytes=RAND_egd(options.egd_sock))==-1) {
+             s_log(LOG_WARNING, "EGD Socket %s failed", options.egd_sock);
+@@ -157,7 +163,7 @@ static int init_prng(void) {
+     }
+ #endif /* EGD_SOCKET */
+ 
+-#endif /* OpenSSL-0.9.5a */
++#endif /* !WITH_NSS && OpenSSL-0.9.5a */
+ #endif /* USE_WIN32 */
+ 
+     /* Try the good-old default /dev/urandom, if available  */
+--- stunnel-4.20/src/ctx.c.nss	2006-11-15 19:54:18.000000000 +0100
++++ stunnel-4.20/src/ctx.c	2007-08-28 16:18:51.000000000 +0200
+@@ -68,15 +68,16 @@ static void sslerror_stack(void);
+ /**************************************** initialize section->ctx */
+ 
+ void context_init(LOCAL_OPTIONS *section) { /* init SSL context */
+-    struct stat st; /* buffer for stat */
+-
+     /* check if certificate exists */
+     if(!section->key) /* key file not specified */
+         section->key=section->cert;
++#ifndef WITH_NSS
+ #ifdef HAVE_OSSL_ENGINE_H
+     if(!section->engine)
+ #endif
+     if(section->option.cert) {
++        struct stat st; /* buffer for stat */
++
+         if(stat(section->key, &st)) {
+             ioerror(section->key);
+             exit(1);
+@@ -86,6 +87,7 @@ void context_init(LOCAL_OPTIONS *section
+             s_log(LOG_WARNING, "Wrong permissions on %s", section->key);
+ #endif /* defined USE_WIN32 */
+     }
++#endif /* !WITH_NSS */
+     /* create SSL context */
+     if(section->option.client) {
+         section->ctx=SSL_CTX_new(section->client_method());
+@@ -99,12 +101,14 @@ void context_init(LOCAL_OPTIONS *section
+             s_log(LOG_WARNING, "Diffie-Hellman initialization failed");
+ #endif /* USE_DH */
+     }
++#ifndef WITH_NSS
+     if(section->ssl_options) {
+         s_log(LOG_DEBUG, "Configuration SSL options: 0x%08lX",
+             section->ssl_options);
+         s_log(LOG_DEBUG, "SSL options set: 0x%08lX",
+             SSL_CTX_set_options(section->ctx, section->ssl_options));
+     }
++#endif
+     if(section->cipher_list) {
+         if (!SSL_CTX_set_cipher_list(section->ctx, section->cipher_list)) {
+             sslerror("SSL_CTX_set_cipher_list");
+@@ -366,8 +370,13 @@ static void info_callback(SSL *s, int wh
+             where & SSL_CB_READ ? "read" : "write",
+             SSL_alert_type_string_long(ret),
+             SSL_alert_desc_string_long(ret));
+-    else if(where==SSL_CB_HANDSHAKE_DONE)
++    else if(where==SSL_CB_HANDSHAKE_DONE) {
++#ifndef WITH_NSS
+         print_stats(s->ctx);
++#else
++        print_stats(s);
++#endif
++    }
+ }
+ 
+ static void print_stats(SSL_CTX *ctx) { /* print statistics */
+--- stunnel-4.20/src/sthreads.c.nss	2006-09-26 09:59:08.000000000 +0200
++++ stunnel-4.20/src/sthreads.c	2007-08-28 16:06:24.000000000 +0200
+@@ -197,7 +197,7 @@ void leave_critical_section(SECTION_CODE
+ }
+ 
+ static void locking_callback(int mode, int type,
+-#ifdef HAVE_OPENSSL
++#if defined(HAVE_OPENSSL) || defined(WITH_NSS)
+     const /* Callback definition has been changed in openssl 0.9.3 */
+ #endif
+     char *file, int line) {
+--- stunnel-4.20/src/verify.c.nss	2006-11-01 15:59:16.000000000 +0100
++++ stunnel-4.20/src/verify.c	2007-08-28 16:06:24.000000000 +0200
+@@ -34,14 +34,20 @@
+ /**************************************** prototypes */
+ 
+ /* verify initialization */
++#ifndef WITH_NSS
+ static void load_file_lookup(X509_STORE *, char *);
+ static void add_dir_lookup(X509_STORE *, char *);
++#endif /* !WITH_NSS */
+ 
+ /* verify callback */
+ static int verify_callback(int, X509_STORE_CTX *);
+ static int cert_check(CLI *c, X509_STORE_CTX *, char *, int);
++#ifndef WITH_NSS
+ static int crl_check(CLI *c, X509_STORE_CTX *, char *);
++#endif
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x00907000L
+ static int ocsp_check(CLI *c, X509_STORE_CTX *, char *);
++#endif /* !WITH_NSS && OpenSSL-0.9.7 */
+ 
+ /**************************************** verify initialization */
+ 
+@@ -55,11 +61,13 @@ void verify_init(LOCAL_OPTIONS *section)
+         exit(1);
+     }
+ 
++#ifndef WITH_NSS
+     section->revocation_store=X509_STORE_new();
+     if(!section->revocation_store) {
+         sslerror("X509_STORE_new");
+         exit(1);
+     }
++#endif
+ 
+     if(section->ca_file) {
+         if(!SSL_CTX_load_verify_locations(section->ctx,
+@@ -75,7 +83,9 @@ void verify_init(LOCAL_OPTIONS *section)
+ #endif
+         s_log(LOG_DEBUG, "Loaded verify certificates from %s",
+             section->ca_file);
++#ifndef WITH_NSS
+         load_file_lookup(section->revocation_store, section->ca_file);
++#endif
+     }
+ 
+     if(section->ca_dir) {
+@@ -87,9 +97,12 @@ void verify_init(LOCAL_OPTIONS *section)
+             exit(1);
+         }
+         s_log(LOG_DEBUG, "Verify directory set to %s", section->ca_dir);
++#ifndef WITH_NSS
+         add_dir_lookup(section->revocation_store, section->ca_dir);
++#endif
+     }
+ 
++#ifndef WITH_NSS
+     if(section->crl_file)
+         load_file_lookup(section->revocation_store, section->crl_file);
+ 
+@@ -97,6 +110,7 @@ void verify_init(LOCAL_OPTIONS *section)
+         section->revocation_store->cache=0; /* don't cache CRLs */
+         add_dir_lookup(section->revocation_store, section->crl_dir);
+     }
++#endif /* !WITH_NSS */
+ 
+     SSL_CTX_set_verify(section->ctx, section->verify_level==SSL_VERIFY_NONE ?
+         SSL_VERIFY_PEER : section->verify_level, verify_callback);
+@@ -105,6 +119,7 @@ void verify_init(LOCAL_OPTIONS *section)
+         s_log(LOG_NOTICE, "Peer certificate location %s", section->ca_dir);
+ }
+ 
++#ifndef WITH_NSS
+ static void load_file_lookup(X509_STORE *store, char *name) {
+     X509_LOOKUP *lookup;
+ 
+@@ -136,6 +151,7 @@ static void add_dir_lookup(X509_STORE *s
+     }
+     s_log(LOG_DEBUG, "Added %s revocation lookup directory", name);
+ }
++#endif /* !WITH_NSS */
+ 
+ /**************************************** verify callback */
+ 
+@@ -157,16 +173,17 @@ static int verify_callback(int preverify
+ 
+     if(!cert_check(c, callback_ctx, subject_name, preverify_ok))
+         return 0; /* reject connection */
++#ifndef WITH_NSS
+     if(!crl_check(c, callback_ctx, subject_name))
+         return 0; /* reject connection */
+-#if SSLEAY_VERSION_NUMBER >= 0x00907000L
++#endif /* !WITH_NSS */
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x00907000L
+     if(c->opt->option.ocsp && !ocsp_check(c, callback_ctx, subject_name))
+         return 0; /* reject connection */
+-#endif /* OpenSSL-0.9.7 */
++#endif /* !WITH_NSS && OpenSSL-0.9.7 */
+ 
+     /* errnum=X509_STORE_CTX_get_error(ctx); */
+-    s_log(LOG_NOTICE, "VERIFY OK: depth=%d, %s",
+-        callback_ctx->error_depth, subject_name);
++    s_log(LOG_NOTICE, "VERIFY OK: %s", subject_name);
+     return 1; /* accept connection */
+ }
+ 
+@@ -177,19 +194,21 @@ static int cert_check(CLI *c, X509_STORE
+     X509_OBJECT ret;
+ 
+     if(c->opt->verify_level==SSL_VERIFY_NONE) {
+-        s_log(LOG_NOTICE, "VERIFY IGNORE: depth=%d, %s",
+-            callback_ctx->error_depth, subject_name);
++        s_log(LOG_NOTICE, "VERIFY IGNORE: %s", subject_name);
+         return 1; /* accept connection */
+     }
+     if(!preverify_ok) {
+         /* remote site specified a certificate, but it's not correct */
+-        s_log(LOG_WARNING, "VERIFY ERROR: depth=%d, error=%s: %s",
+-            callback_ctx->error_depth,
++        s_log(LOG_WARNING, "VERIFY ERROR: error=%s: %s",
+             X509_verify_cert_error_string (callback_ctx->error),
+                 subject_name);
+         return 0; /* reject connection */
+     }
+-    if(c->opt->verify_use_only_my && callback_ctx->error_depth==0 &&
++    /* FIXME: test this */
++    if(c->opt->verify_use_only_my &&
++#ifndef WITH_NSS
++       callback_ctx->error_depth==0 &&
++#endif
+             X509_STORE_get_by_subject(callback_ctx, X509_LU_X509,
+                 X509_get_subject_name(callback_ctx->current_cert), &ret)!=1) {
+         s_log(LOG_WARNING, "VERIFY ERROR ONLY MY: no cert for %s",
+@@ -201,6 +220,7 @@ static int cert_check(CLI *c, X509_STORE
+ 
+ /**************************************** CRL checking */
+ 
++#ifndef WITH_NSS
+ /* based on BSD-style licensed code of mod_ssl */
+ static int crl_check(CLI *c, X509_STORE_CTX *callback_ctx,
+         char *subject_name) {
+@@ -318,10 +338,11 @@ static int crl_check(CLI *c, X509_STORE_
+     }
+     return 1; /* accept connection */
+ }
++#endif /* !WITH_NSS */
+ 
+ /**************************************** OCSP checking */
+ 
+-#if SSLEAY_VERSION_NUMBER >= 0x00907000L
++#if !defined(WITH_NSS) && SSLEAY_VERSION_NUMBER >= 0x00907000L
+ static int ocsp_check(CLI *c, X509_STORE_CTX *callback_ctx,
+         char *subject_name) {
+     int error, retval=0;
+@@ -442,6 +463,6 @@ cleanup:
+     c->fd=-1; /* avoid double close on cleanup */
+     return retval;
+ }
+-#endif /* OpenSSL-0.9.7 */
++#endif /* !WITH_NSS && OpenSSL-0.9.7 */
+ 
+ /* End of verify.c */
+--- stunnel-4.20/src/Makefile.am.nss	2006-11-04 23:23:22.000000000 +0100
++++ stunnel-4.20/src/Makefile.am	2007-08-28 16:06:24.000000000 +0200
+@@ -27,7 +27,8 @@ INCLUDES = -I/usr/kerberos/include
+ 
+ # Additional compiler flags
+ 
+-AM_CPPFLAGS = -DLIBDIR='"$(libdir)"' -DCONFDIR='"$(sysconfdir)/stunnel"' -DPIDFILE='"$(prefix)/var/run/stunnel/stunnel.pid"'
++AM_CPPFLAGS = -DLIBDIR='"$(libdir)"' -DCONFDIR='"$(sysconfdir)/stunnel"' -DPIDFILE='"$(prefix)/var/run/stunnel/stunnel.pid"' $(NSS_CFLAGS)
++AM_LDFLAGS = $(NSS_LIBS)
+ 
+ # Win32 executable
+ 
+--- stunnel-4.20/src/common.h.nss	2006-11-17 10:03:18.000000000 +0100
++++ stunnel-4.20/src/common.h	2007-08-28 16:06:24.000000000 +0200
+@@ -307,7 +307,9 @@ extern char *sys_errlist[];
+ 
+ /**************************************** OpenSSL headers */
+ 
+-#ifdef HAVE_OPENSSL
++#ifdef WITH_NSS
++#include <nss_compat_ossl/nss_compat_ossl.h>
++#elif defined(HAVE_OPENSSL)
+ #include <openssl/lhash.h>
+ #include <openssl/ssl.h>
+ #include <openssl/err.h>
+--- stunnel-4.20/src/protocol.c.nss	2006-11-11 12:02:51.000000000 +0100
++++ stunnel-4.20/src/protocol.c	2007-08-28 16:06:24.000000000 +0200
+@@ -30,6 +30,9 @@
+ 
+ #include "common.h"
+ #include "prototypes.h"
++#ifdef WITH_NSS
++#include <plbase64.h>
++#endif
+ 
+ /* \n is not a character expected in the string */
+ #define LINE "%[^\n]"
+@@ -70,8 +73,10 @@ void negotiate(CLI *c) {
+             imap_client(c);
+         else if(!strcmp(c->opt->protocol, "nntp"))
+             nntp_client(c);
++#ifndef WITH_NSS
+         else if(!strcmp(c->opt->protocol, "connect"))
+             connect_client(c);
++#endif
+         else {
+             s_log(LOG_ERR, "Protocol %s not supported in client mode",
+                 c->opt->protocol);
+@@ -511,8 +516,9 @@ static void crypt_DES(DES_cblock dst, co
+ }
+ 
+ static char *base64(int encode, char *in, int len) {
+-    BIO *bio, *b64;
+     char *out;
++#ifndef WITH_NSS
++    BIO *bio, *b64;
+ 
+     b64=BIO_new(BIO_f_base64());
+     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+@@ -535,6 +541,23 @@ static char *base64(int encode, char *in
+     }
+     BIO_read(bio, out, len);
+     BIO_free_all(bio);
++#else
++    if (encode) {
++	out = calloc(((len + 2) / 3) * 4 + 1, 1);
++	if (!out) {
++	    log_raw("Fatal memory allocation error");
++	    exit(2);
++	}
++	PL_Base64Encode(in, len, out);
++    } else {
++	out = calloc(((len * 3 + 3) / 4) + 1, 1);
++	if (!out) {
++	    log_raw("Fatal memory allocation error");
++	    exit(2);
++	}
++	PL_Base64Decode(in, len, out);
++    }
++#endif
+     return out;
+ }
+ 
