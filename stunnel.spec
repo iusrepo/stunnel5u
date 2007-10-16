@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.20
-Release: 3.nss
+Release: 4
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -12,16 +12,11 @@ Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
-Source7: README.NSS
-Source8: nss_compat_ossl-0.9.1.tar.gz
 Patch0: stunnel-4.08-authpriv.patch
 Patch1: stunnel-4.18-sample.patch
-Patch2: stunnel-4.20-nss.patch
-Patch3: nss_compat_ossl-0.9.1-stunnel.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
-BuildRequires: nss-devel, pkgconfig, tcp_wrappers-devel, util-linux
-BuildRequires: autoconf automake libtool
+BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 
 %description
 Stunnel is a socket wrapper which can provide SSL (Secure Sockets
@@ -29,36 +24,22 @@ Layer) support to ordinary applications. For example, it can be used
 in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
-%setup -q -a 8
+%setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
-%patch2 -p1 -b .nss
-pushd nss_compat_ossl-0.9.1
-%patch3 -p0 -b .stunnel
-autoreconf
-popd
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
 iconv -f iso-8859-2 -t utf-8 < doc/stunnel.pl.8 > doc/stunnel.pl.8_
 mv doc/stunnel.pl.8_ doc/stunnel.pl.8
 
-# For patch2
-autoreconf
-
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
-
-pushd nss_compat_ossl-0.9.1
-autoreconf
-./configure --prefix=$(pwd)/p --libdir=$(pwd)/p/lib \
-	--disable-shared --enable-static
-make all install
-popd
-
-CFLAGS="-I$(pwd)/nss_compat_ossl-0.9.1/p/include $CFLAGS"
-export LDFLAGS="-L$(pwd)/nss_compat_ossl-0.9.1/p/lib"
-%configure --with-nss --enable-ipv6 \
+if pkg-config openssl ; then
+	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
+	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
+fi
+%configure --enable-ipv6 \
 	CPPFLAGS="-UPIDFILE -DPIDFILE='\"%{_localstatedir}/run/stunnel.pid\"'"
 make LDADD="-pie -Wl,-z,defs,-z,relro"
 
@@ -76,7 +57,7 @@ for lang in fr pl ; do
 done
 
 mkdir srpm-docs
-cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} %{SOURCE7} srpm-docs
+cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 
 %post -p /sbin/ldconfig
 
@@ -96,13 +77,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libstunnel.so
 %exclude %{_libdir}/libstunnel.la
 %{_mandir}/man8/stunnel.8*
-%{_mandir}/*/man8/stunnel.8*
+%lang(fr) %{_mandir}/fr/man8/stunnel.8*
+%lang(pl) %{_mandir}/pl/man8/stunnel.8*
 %{_sbindir}/stunnel
 %{_sbindir}/stunnel3
 %dir %{_sysconfdir}/%{name}
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Tue Oct 16 2007 Miloslav Trmač <mitr@redhat.com> - 4.20-4
+- Revert the port to NSS, wait for NSS-based stunnel 5.x instead
+  Resolves: #301971
+- Mark localized man pages with %%lang (patch by Ville Skyttä)
+  Resolves: #322281
+
 * Tue Aug 28 2007 Miloslav Trmač <mitr@redhat.com> - 4.20-3.nss
 - Port to NSS
 
