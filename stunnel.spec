@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.20
-Release: 4
+Release: 5
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -85,6 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Tue Dec  4 2007 Miloslav Trmač <mitr@redhat.com> - 4.20-5
+- Rebuild with openssl-0.9.8g
+
 * Tue Oct 16 2007 Miloslav Trmač <mitr@redhat.com> - 4.20-4
 - Revert the port to NSS, wait for NSS-based stunnel 5.x instead
   Resolves: #301971
