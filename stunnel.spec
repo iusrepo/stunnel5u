@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.20
-Release: 6
+Version: 4.22
+Release: 1
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -59,32 +59,31 @@ done
 mkdir srpm-docs
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS ChangeLog COPY* CREDITS NEWS PORTS README TODO
+%doc AUTHORS BUGS ChangeLog COPY* CREDITS PORTS README TODO
 %doc tools/stunnel.conf-sample
 %doc srpm-docs/*
 %lang(en) %doc doc/en/*
 %lang(po) %doc doc/pl/*
+%{_bindir}/stunnel
+%{_bindir}/stunnel3
 %exclude %{_datadir}/doc/stunnel
-%{_libdir}/libstunnel.so
-%exclude %{_libdir}/libstunnel.la
+%{_libdir}/stunnel
+%exclude %{_libdir}/stunnel/libstunnel.la
 %{_mandir}/man8/stunnel.8*
 %lang(fr) %{_mandir}/fr/man8/stunnel.8*
 %lang(pl) %{_mandir}/pl/man8/stunnel.8*
-%{_sbindir}/stunnel
-%{_sbindir}/stunnel3
 %dir %{_sysconfdir}/%{name}
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Fri Mar 28 2008 Miloslav Trmač <mitr@redhat.com> - 4.22-1
+- Update to stunnel-4.22
+
 * Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 4.20-6
 - Autorebuild for GCC 4.3
 
