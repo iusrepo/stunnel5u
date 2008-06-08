@@ -1,0 +1,17 @@
+diff -up stunnel-4.25/src/resolver.c~ stunnel-4.25/src/resolver.c
+--- stunnel-4.25/src/resolver.c~	2008-03-26 20:09:48.000000000 +0100
++++ stunnel-4.25/src/resolver.c	2008-06-08 06:43:43.000000000 +0200
+@@ -124,8 +124,11 @@ int hostport2addrlist(SOCKADDR_LIST *add
+ 
+     err=getaddrinfo(hostname, portname, &hints, &res);
+     if(err) {
+-        s_log(LOG_ERR, "Error resolving '%s': %s",
+-            hostname, s_gai_strerror(err));
++        if(err == EAI_SERVICE)
++	    s_log(LOG_ERR, "Unknown TCP service '%s'", portname);
++	else
++	    s_log(LOG_ERR, "Error resolving '%s': %s",
++		hostname, s_gai_strerror(err));
+         if(res)
+             freeaddrinfo(res);
+         return 0; /* Error */
