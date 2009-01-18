@@ -39,7 +39,7 @@ if pkg-config openssl ; then
 	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
-%configure --enable-ipv6 \
+%configure --disable-fips --enable-ipv6 \
 	CPPFLAGS="-UPIDFILE -DPIDFILE='\"%{_localstatedir}/run/stunnel.pid\"'"
 make LDADD="-pie -Wl,-z,defs,-z,relro"
 
@@ -82,7 +82,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Jan 18 2009 Tomas Mraz <tmraz@redhat.com> - 4.26-2
-- rebuild with new openssl
+- disable openssl upstream fips mode
 
 * Mon Sep 22 2008 Miloslav Trmač <mitr@redhat.com> - 4.26-1
 - Update to stunnel-4.26.
