@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.26
-Release: 2
+Release: 3
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.26-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Sun Jan 18 2009 Tomas Mraz <tmraz@redhat.com> - 4.26-2
 - disable openssl upstream fips mode
 
