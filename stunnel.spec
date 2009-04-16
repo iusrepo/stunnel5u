@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.26
-Release: 3
+Version: 4.27
+Release: 1
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -12,8 +12,8 @@ Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
-Patch0: stunnel-4.08-authpriv.patch
-Patch1: stunnel-4.18-sample.patch
+Patch0: stunnel-4.27-authpriv.patch
+Patch1: stunnel-4.27-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
@@ -30,8 +30,6 @@ in conjunction with imapd to create an SSL secure IMAP server.
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
-iconv -f iso-8859-2 -t utf-8 < doc/stunnel.pl.8 > doc/stunnel.pl.8_
-mv doc/stunnel.pl.8_ doc/stunnel.pl.8
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
@@ -81,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Thu Apr 16 2009 Miloslav Trmač <mitr@redhat.com> - 4.27-1
+- Update to stunnel-4.27.
+
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.26-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
