@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.27
-Release: 2
+Release: 3
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -81,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Sun May  3 2009 Miloslav Trmač <mitr@redhat.com> - 4.27-3
+- Fix the previous patch.
+
 * Wed Apr 29 2009 Miloslav Trmač <mitr@redhat.com> - 4.27-2
 - Avoid aliasing undefined by ISO C
 

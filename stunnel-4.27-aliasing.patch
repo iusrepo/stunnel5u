@@ -6,7 +6,7 @@ diff -urN stunnel/src/libwrap.c stunnel-4.27/src/libwrap.c
          return -1;
      }
 -    *recvfd=*((int *)CMSG_DATA(cmptr));
-+    memcpy(&recvfd, CMSG_DATA(cmptr), sizeof(int));
++    memcpy(recvfd, CMSG_DATA(cmptr), sizeof(int));
  #else
      if(msg.msg_accrightslen==sizeof(int))
          *recvfd=newfd;
