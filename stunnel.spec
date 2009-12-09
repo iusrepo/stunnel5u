@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.27
-Release: 5
+Version: 4.29
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -12,9 +12,9 @@ Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
-Patch0: stunnel-4.27-authpriv.patch
-Patch1: stunnel-4.27-sample.patch
-Patch2: stunnel-4.27-aliasing.patch
+Patch0: stunnel-4.29-authpriv.patch
+Patch1: stunnel-4.29-sample.patch
+#Patch2: stunnel-4.27-aliasing.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
@@ -28,7 +28,7 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
-%patch2 -p1 -b .aliasing
+#%patch2 -p1 -b .aliasing
 
 iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
 mv doc/stunnel.fr.8_ doc/stunnel.fr.8
@@ -81,6 +81,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Tue Dec 09 2009 Avesh Agrwal <avagarwa@redhat.com> - 4.29-1
+- New upstream realease 4.29
+- Updated authpriv and sample patches for the new release
+- Modified spec file to include dist tag
+
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 4.27-5
 - rebuilt with new openssl
 
