@@ -1,6 +1,6 @@
-diff -urNp stunnel-4.32/tools/stunnel.conf-sample.in stunnel-4.32-modified/tools/stunnel.conf-sample.in
---- stunnel-4.32/tools/stunnel.conf-sample.in	2010-01-18 08:17:49.000000000 -0500
-+++ stunnel-4.32-modified/tools/stunnel.conf-sample.in	2010-03-29 15:09:33.000000000 -0400
+diff -urNp stunnel-4.33-orig/tools/stunnel.conf-sample.in stunnel-4.33/tools/stunnel.conf-sample.in
+--- stunnel-4.33-orig/tools/stunnel.conf-sample.in	2010-01-18 08:17:49.000000000 -0500
++++ stunnel-4.33/tools/stunnel.conf-sample.in	2010-04-07 12:13:11.000000000 -0400
 @@ -4,15 +4,15 @@
  ; please read the manual and make sure you understand them
  
