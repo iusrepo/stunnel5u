@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.33
+Version: 4.34
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -12,8 +12,8 @@ Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
-Patch0: stunnel-4.33-authpriv.patch
-Patch1: stunnel-4.33-sample.patch
+Patch0: stunnel-4-authpriv.patch
+Patch1: stunnel-4-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
@@ -79,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Oct 4 2010 Avesh Agarwal <avagarwa@redhat.com> - 4.34-1
+- New upstream realease 4.34
+- Updated authpriv and sample patches to match the new release
+
 * Wed Apr 7 2010 Avesh Agarwal <avagarwa@redhat.com> - 4.33-1
 - New upstream realease 4.33
 - Updated authpriv and sample patches to match the new release
