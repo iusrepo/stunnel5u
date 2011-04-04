@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.34
-Release: 2%{?dist}
+Version: 4.35
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -79,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Apr 4 2011 Avesh Agarwal <avagarwa@redhat.com> - 4.35-1
+- New upstream realease 4.35
+- Updated authpriv and sample patches to match the new release
+
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.34-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
