@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.37
+Version: 4.41
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -79,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Aug 1 2011 Avesh Agarwal <avagarwa@redhat.com> - 4.41-1
+- New upstream realease 4.41
+- Updated local patches to match the new release
+
 * Tue Jun 28 2011 Avesh Agarwal <avagarwa@redhat.com> - 4.37-1
 - New upstream realease 4.37
 - Updated local patches to match the new release
