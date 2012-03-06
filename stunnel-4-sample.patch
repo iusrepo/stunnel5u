@@ -1,6 +1,6 @@
-diff -urNp stunnel-4.50/tools/stunnel.conf-sample.in stunnel-4.50-patched/tools/stunnel.conf-sample.in
---- stunnel-4.50/tools/stunnel.conf-sample.in	2011-11-22 17:20:37.000000000 -0500
-+++ stunnel-4.50-patched/tools/stunnel.conf-sample.in	2012-01-03 10:41:32.344325275 -0500
+diff -urNp stunnel-4.52/tools/stunnel.conf-sample.in stunnel-4.52-patched/tools/stunnel.conf-sample.in
+--- stunnel-4.52/tools/stunnel.conf-sample.in	2012-01-01 16:46:46.000000000 -0500
++++ stunnel-4.52-patched/tools/stunnel.conf-sample.in	2012-03-05 18:36:03.793609849 -0500
 @@ -9,7 +9,7 @@
  
  ; A copy of some devices and system files is needed within the chroot jail
