@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.54
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -39,7 +39,7 @@ if pkg-config openssl ; then
 fi
 %configure --disable-fips --enable-ipv6 \
 	CPPFLAGS="-UPIDFILE -DPIDFILE='\"%{_localstatedir}/run/stunnel.pid\"'"
-make LDADD="-pie -Wl,-z,defs,-z,relro"
+make LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -79,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+*Mon Dec 10 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-2
+- 884183: support for full relro.
+
 *Tue Oct 16 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-1
 - New upstream realease 4.54
 - Updated local patches
