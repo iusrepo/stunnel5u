@@ -83,16 +83,19 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
-*Mon Mar 4 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-1
+* Mon Mar 4 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-1
 - New upstream realease 4.55
 - Updated local patches
 - enabled fips mode
 - Fixed for pod2man as it build-requires perl-podlators
 
-*Mon Dec 10 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-2
+* Fri Feb 15 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.54-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Mon Dec 10 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-2
 - 884183: support for full relro.
 
-*Tue Oct 16 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-1
+* Tue Oct 16 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-1
 - New upstream realease 4.54
 - Updated local patches
 
