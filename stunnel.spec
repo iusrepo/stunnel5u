@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.54
-Release: 2%{?dist}
+Version: 4.55
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -17,6 +17,10 @@ Patch1: stunnel-4-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
+# for /usr/bin/pod2man
+%if 0%{?fedora} > 18
+BuildRequires: perl-podlators
+%endif
 
 %description
 Stunnel is a socket wrapper which can provide SSL (Secure Sockets
@@ -37,7 +41,7 @@ if pkg-config openssl ; then
 	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
 	LDFLAGS="`pkg-config --libs-only-L openssl`"; export LDFLAGS
 fi
-%configure --disable-fips --enable-ipv6 \
+%configure --enable-fips --enable-ipv6 \
 	CPPFLAGS="-UPIDFILE -DPIDFILE='\"%{_localstatedir}/run/stunnel.pid\"'"
 make LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 
@@ -79,6 +83,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+*Mon Mar 4 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-1
+- New upstream realease 4.55
+- Updated local patches
+- enabled fips mode
+- Fixed for pod2man as it build-requires perl-podlators
+
 *Mon Dec 10 2012 Avesh Agarwal <avagarwa@redhat.com> - 4.54-2
 - 884183: support for full relro.
 
