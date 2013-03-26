@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.55
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://stunnel.mirt.net/
@@ -18,7 +18,7 @@ Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 # for /usr/bin/pod2man
-%if 0%{?fedora} > 18
+%if 0%{?fedora} > 18 || 0%{?rhel} >= 7
 BuildRequires: perl-podlators
 %endif
 
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Mar 26 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-2
+- Resolves: 927841 
+
 * Mon Mar 4 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-1
 - New upstream realease 4.55
 - Updated local patches
