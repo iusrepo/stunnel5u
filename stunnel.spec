@@ -1,12 +1,13 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.55
-Release: 2%{?dist}
+Version: 4.56
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
-URL: http://stunnel.mirt.net/
-Source0: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz
-Source1: ftp://stunnel.mirt.net/stunnel/stunnel-%{version}.tar.gz.asc
+URL: http://www.stunnel.org/
+Source0: ftp://ftp.stunnel.org/stunnel/stunnel-%{version}.tar.gz
+Source1: ftp://ftp.stunnel.org/stunnel/stunnel-%{version}.tar.gz.asc
+Source7: ftp://ftp.stunnel.org/stunnel/stunnel-%{version}.tar.gz.sha256
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
@@ -83,6 +84,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Apr 1 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.56-1
+- New upstream realease 4.56.
+- Updated local patches.
+- Fixed upstream URL in spec file.
+- Sourced URL of sha256 hash file in spec file.
+
 * Mon Mar 26 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-2
 - Resolves: 927841 
 
