@@ -1,13 +1,13 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 4.56
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
-Source0: ftp://ftp.stunnel.org/stunnel/stunnel-%{version}.tar.gz
-Source1: ftp://ftp.stunnel.org/stunnel/stunnel-%{version}.tar.gz.asc
-Source7: ftp://ftp.stunnel.org/stunnel/stunnel-%{version}.tar.gz.sha256
+Source0: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz
+Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
+Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
@@ -84,6 +84,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Mon Aug 5 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.56-3
+- Ftp mirrors for NA does not work, so changing source code
+  URLs to the correct ones.
+
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.56-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
