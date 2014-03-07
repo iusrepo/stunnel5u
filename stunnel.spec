@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 4.56
-Release: 3%{?dist}
+Version: 5.00
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
@@ -13,8 +13,8 @@ Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
-Patch0: stunnel-4-authpriv.patch
-Patch1: stunnel-4-sample.patch
+Patch0: stunnel-5-authpriv.patch
+Patch1: stunnel-5-sample.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
@@ -84,6 +84,13 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Fri Mar 7 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.00-1
+- New upstream realease 5.00
+- Updated local patches.
+- Fix for CVE-2014-0016
+- Fixed changelog date errors
+- Fixes rhbz #1006819
+
 * Mon Aug 5 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.56-3
 - Ftp mirrors for NA does not work, so changing source code
   URLs to the correct ones.
@@ -97,7 +104,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fixed upstream URL in spec file.
 - Sourced URL of sha256 hash file in spec file.
 
-* Mon Mar 26 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-2
+* Tue Mar 26 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-2
 - Resolves: 927841 
 
 * Mon Mar 4 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-1
@@ -179,7 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 - New upstream realease 4.30
 - Updated authpriv and sample patches for the new release
 
-* Tue Dec 09 2009 Avesh Agarwal <avagarwa@redhat.com> - 4.29-1
+* Wed Dec 09 2009 Avesh Agarwal <avagarwa@redhat.com> - 4.29-1
 - New upstream realease 4.29
 - Updated authpriv and sample patches for the new release
 - Modified spec file to include dist tag
@@ -465,7 +472,7 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Oct 30 1999 Bernhard Rosenkraenzer <bero@redhat.com>
 - Modify spec file to match Red Hat standards
 
-* Fri Aug 12 1999 Damien Miller <damien@ibs.com.au>
+* Thu Aug 12 1999 Damien Miller <damien@ibs.com.au>
 - Updated to 3.4a
 - Patched for OpenSSL 0.9.4
 - Cleaned up files section
