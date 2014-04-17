@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.00
+Version: 5.01
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -84,6 +84,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Thu Apr 17 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.01-1
+- New upstream realease 5.01
+- Supports OpenSSL DLLs 1.0.1g.
+- Fixes to take care of OpenSSL,s TLS heartbeat
+  read overrun (CVE-2014-0160).
+
 * Fri Mar 7 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.00-1
 - New upstream realease 5.00
 - Updated local patches.
