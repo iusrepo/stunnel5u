@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 5.01
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
@@ -15,12 +15,19 @@ Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
 Patch0: stunnel-5-authpriv.patch
 Patch1: stunnel-5-sample.patch
+Patch2: stunnel-systemd-service.patch
 Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 # for /usr/bin/pod2man
 %if 0%{?fedora} > 18 || 0%{?rhel} >= 7
 BuildRequires: perl-podlators
+%endif
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+BuildRequires: systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
 %endif
 
 %description
@@ -32,9 +39,10 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
+%patch2 -p1
 
-iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
-mv doc/stunnel.fr.8_ doc/stunnel.fr.8
+#iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
+#mv doc/stunnel.fr.8_ doc/stunnel.fr.8
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
@@ -47,9 +55,9 @@ fi
 make LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/stunnel
-touch $RPM_BUILD_ROOT%{_sysconfdir}/stunnel/stunnel.pem
+#rm -rf $RPM_BUILD_ROOT
+#mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/stunnel
+#touch $RPM_BUILD_ROOT%{_sysconfdir}/stunnel/stunnel.pem
 make install DESTDIR=$RPM_BUILD_ROOT
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
@@ -58,9 +66,12 @@ for lang in fr pl ; do
 	mv $RPM_BUILD_ROOT/%{_mandir}/man8/*.${lang}.8* $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/
 	rename ".${lang}" "" $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/*
 done
-
 mkdir srpm-docs
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+mkdir -p $RPM_BUILD_ROOT%{_unitdir}
+cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -82,8 +93,37 @@ rm -rf $RPM_BUILD_ROOT
 %lang(pl) %{_mandir}/pl/man8/stunnel.8*
 %dir %{_sysconfdir}/%{name}
 %exclude %{_sysconfdir}/stunnel/*
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+%{_unitdir}/%{name}.service
+%endif
+
+%post
+/sbin/ldconfig
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+%systemd_post %{name}.service
+%endif
+
+%preun
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+%systemd_preun %{name}.service
+%endif
+
+%postun
+/sbin/ldconfig
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+%systemd_postun_with_restart %{name}.service
+%endif
 
 %changelog
+* Mon Apr 28 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.01-2
+- Integration with systemd.
+- Spec file clean up
+- Patched stunnel systemd unit file to have dependency on
+  network.target.
+- rhbz#455815: Packaged systemd service file
+- rhbz#782535: Fixed private tmp issue.
+- rhbz#995831: Fixed wrong encoding of french man page.
+
 * Thu Apr 17 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.01-1
 - New upstream realease 5.01
 - Supports OpenSSL DLLs 1.0.1g.
