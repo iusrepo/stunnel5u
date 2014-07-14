@@ -1,16 +1,16 @@
-diff -urNp stunnel-5.00-patched/tools/stunnel.conf-sample.in stunnel-5.00-current/tools/stunnel.conf-sample.in
---- stunnel-5.00-patched/tools/stunnel.conf-sample.in	2014-03-07 14:04:50.015418514 -0500
-+++ stunnel-5.00-current/tools/stunnel.conf-sample.in	2014-03-07 14:06:45.501516446 -0500
+diff -urNp stunnel-5.02-patched/tools/stunnel.conf-sample.in stunnel-5.02-current/tools/stunnel.conf-sample.in
+--- stunnel-5.02-patched/tools/stunnel.conf-sample.in	2014-07-14 13:12:23.093008573 -0400
++++ stunnel-5.02-current/tools/stunnel.conf-sample.in	2014-07-14 13:22:38.431698073 -0400
 @@ -9,7 +9,7 @@
  
  ; A copy of some devices and system files is needed within the chroot jail
  ; Chroot conflicts with configuration file reload and many other features
--chroot = @prefix@/var/lib/stunnel/
-+chroot = @localstatedir@/run/stunnel/
+-;chroot = @prefix@/var/lib/stunnel/
++;chroot = @localstatedir@/run/stunnel/
  ; Chroot jail can be escaped if setuid option is not used
  setuid = nobody
  setgid = @DEFAULT_GROUP@
-@@ -26,8 +26,8 @@ pid = /stunnel.pid
+@@ -26,8 +26,8 @@ setgid = @DEFAULT_GROUP@
  ; **************************************************************************
  
  ; Certificate/key is needed in server mode and optional in client mode

@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.01
-Release: 3%{?dist}
+Version: 5.02
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
@@ -56,8 +56,6 @@ make LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 
 %install
 #rm -rf $RPM_BUILD_ROOT
-#mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/stunnel
-#touch $RPM_BUILD_ROOT%{_sysconfdir}/stunnel/stunnel.pem
 make install DESTDIR=$RPM_BUILD_ROOT
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
@@ -115,6 +113,15 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Jul 14 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.02-1
+- rhbz#1108818: New upstream realease 5.02
+- Updated local patches
+- The rhbz#530950 is tested and seems to work. STRLEN has
+  been no longer allocated statically since 4.36 version.
+  So it is possible that this bz might have got fixed
+  around 4.36 release.
+- Fixes rpmlint errors
+
 * Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.01-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
