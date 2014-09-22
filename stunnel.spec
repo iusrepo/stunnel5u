@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.03
+Version: 5.04
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -113,6 +113,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Sep 22 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.04-1
+- New upstream realease 5.04
+- Updates local patches so that they apply cleanly to
+  avoud hunk errors
+
 * Thu Aug 28 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.03-1
 - New upstream realease 5.03
 

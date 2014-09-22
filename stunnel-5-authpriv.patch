@@ -1,6 +1,6 @@
-diff -urNp stunnel-5.00-patched/doc/stunnel.8 stunnel-5.00-current/doc/stunnel.8
---- stunnel-5.00-patched/doc/stunnel.8	2014-03-07 14:04:50.015418514 -0500
-+++ stunnel-5.00-current/doc/stunnel.8	2014-03-07 14:05:27.243448245 -0500
+diff -urNp stunnel-5.04-patched/doc/stunnel.8 stunnel-5.04-current/doc/stunnel.8
+--- stunnel-5.04-patched/doc/stunnel.8	2014-09-16 16:31:54.000000000 -0400
++++ stunnel-5.04-current/doc/stunnel.8	2014-09-22 15:44:27.897393109 -0400
 @@ -190,7 +190,7 @@ info (6), or debug (7).  All logs for th
  all levels numerically less than it will be shown.  Use \fIdebug = debug\fR or
  \&\fIdebug = 7\fR for greatest debugging output.  The default is notice (5).
@@ -10,9 +10,9 @@ diff -urNp stunnel-5.00-patched/doc/stunnel.8 stunnel-5.00-current/doc/stunnel.8
  (Facilities are not supported on Win32.)
  .Sp
  Case is ignored for both facilities and levels.
-diff -urNp stunnel-5.00-patched/doc/stunnel.html stunnel-5.00-current/doc/stunnel.html
---- stunnel-5.00-patched/doc/stunnel.html	2014-03-07 14:04:50.014418534 -0500
-+++ stunnel-5.00-current/doc/stunnel.html	2014-03-07 14:05:27.244448247 -0500
+diff -urNp stunnel-5.04-patched/doc/stunnel.html stunnel-5.04-current/doc/stunnel.html
+--- stunnel-5.04-patched/doc/stunnel.html	2014-09-16 16:31:54.000000000 -0400
++++ stunnel-5.04-current/doc/stunnel.html	2014-09-22 15:44:27.898393096 -0400
 @@ -224,7 +224,7 @@ emerg (0), alert (1), crit (2), err (3),
  info (6), or debug (7).  All logs for the specified level and
  all levels numerically less than it will be shown.  Use <em>debug = debug</em> or
@@ -22,9 +22,9 @@ diff -urNp stunnel-5.00-patched/doc/stunnel.html stunnel-5.00-current/doc/stunne
  (Facilities are not supported on Win32.)</p>
  <p>Case is ignored for both facilities and levels.</p>
  </dd>
-diff -urNp stunnel-5.00-patched/doc/stunnel.pod stunnel-5.00-current/doc/stunnel.pod
---- stunnel-5.00-patched/doc/stunnel.pod	2014-03-07 14:04:50.014418534 -0500
-+++ stunnel-5.00-current/doc/stunnel.pod	2014-03-07 14:05:27.245448251 -0500
+diff -urNp stunnel-5.04-patched/doc/stunnel.pod stunnel-5.04-current/doc/stunnel.pod
+--- stunnel-5.04-patched/doc/stunnel.pod	2014-09-16 08:15:58.000000000 -0400
++++ stunnel-5.04-current/doc/stunnel.pod	2014-09-22 15:44:27.899393083 -0400
 @@ -184,7 +184,7 @@ info (6), or debug (7).  All logs for th
  all levels numerically less than it will be shown.  Use I<debug = debug> or
  I<debug = 7> for greatest debugging output.  The default is notice (5).
@@ -34,10 +34,10 @@ diff -urNp stunnel-5.00-patched/doc/stunnel.pod stunnel-5.00-current/doc/stunnel
  (Facilities are not supported on Win32.)
  
  Case is ignored for both facilities and levels.
-diff -urNp stunnel-5.00-patched/src/options.c stunnel-5.00-current/src/options.c
---- stunnel-5.00-patched/src/options.c	2014-03-07 14:04:50.019418416 -0500
-+++ stunnel-5.00-current/src/options.c	2014-03-07 14:05:27.246448261 -0500
-@@ -185,8 +185,12 @@ NOEXPORT char *parse_global_option(CMD c
+diff -urNp stunnel-5.04-patched/src/options.c stunnel-5.04-current/src/options.c
+--- stunnel-5.04-patched/src/options.c	2014-09-20 15:03:10.000000000 -0400
++++ stunnel-5.04-current/src/options.c	2014-09-22 15:44:27.901393056 -0400
+@@ -371,8 +371,12 @@ NOEXPORT char *parse_global_option(CMD c
      case CMD_BEGIN:
          new_global_options.debug_level=LOG_NOTICE;
  #if !defined (USE_WIN32) && !defined (__vms)
