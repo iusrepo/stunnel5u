@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
 Version: 5.04
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
@@ -16,7 +16,6 @@ Source6: stunnel-pop3s-client.conf
 Patch0: stunnel-5-authpriv.patch
 Patch1: stunnel-5-sample.patch
 Patch2: stunnel-systemd-service.patch
-Buildroot: %{_tmppath}/stunnel-root
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 # for /usr/bin/pod2man
@@ -40,9 +39,6 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
 %patch2 -p1
-
-#iconv -f iso-8859-1 -t utf-8 < doc/stunnel.fr.8 > doc/stunnel.fr.8_
-#mv doc/stunnel.fr.8_ doc/stunnel.fr.8
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
@@ -70,9 +66,6 @@ cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}
 cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
 %endif
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
@@ -113,6 +106,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Fri Sep 26 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.04-2
+- Fixes packaging issues mentioned in rhbz#226439
+
 * Mon Sep 22 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.04-1
 - New upstream realease 5.04
 - Updates local patches so that they apply cleanly to
