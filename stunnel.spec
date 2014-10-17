@@ -1,13 +1,13 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.05b5
+Version: 5.06
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
 Source0: https://www.stunnel.org/downloads/beta/stunnel-%{version}.tar.gz
-#Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
-#Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
+Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
+Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
@@ -35,7 +35,7 @@ Layer) support to ordinary applications. For example, it can be used
 in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
-%setup -q -n stunnel-5.05
+%setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
 %patch2 -p1
@@ -106,6 +106,10 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %endif
 
 %changelog
+* Fri Oct 17 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.06-1
+- New upstream release 5.06
+- Addresses Poodle security issue
+
 * Wed Oct 8 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.05b5-1
 - rhbz #1144393: New upstream beta release
 - systemd socket activation support
