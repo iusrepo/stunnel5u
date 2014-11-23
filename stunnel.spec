@@ -20,6 +20,7 @@ Patch3: stunnel-configure-ac.patch
 Patch4: stunnel-1155977.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
+BuildRequires: autoconf automake
 # for /usr/bin/pod2man
 %if 0%{?fedora} > 18 || 0%{?rhel} >= 7
 BuildRequires: perl-podlators
@@ -114,11 +115,10 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 * Sun Nov 23 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.08b6-1
 - 1163349: New upstream beta release 5.08b6
 - Fixed incorrect reporting of fips status in configure.ac
-  at compile time
+  at compile time, requires autoconf automake at buildtime
 - Fixed default OpenSSL directory issue by using with-ssl
 - Updates local patches
 - 1155977: Fixes man page issues
- 
 
 * Tue Nov 04 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.07-1
 - New upstream release 5.07
