@@ -1,13 +1,13 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.08b6
+Version: 5.08
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
-Source0: https://www.stunnel.org/downloads/beta/stunnel-%{version}.tar.gz
-#Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
-#Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
+Source0: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz
+Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
+Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
@@ -38,7 +38,7 @@ Layer) support to ordinary applications. For example, it can be used
 in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
-%setup -q -n stunnel-5.08
+%setup -q
 %patch0 -p1 -b .authpriv
 %patch1 -p1 -b .sample
 %patch2 -p1
@@ -112,6 +112,9 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %endif
 
 %changelog
+* Thu Dec 11 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.08-1
+- 1163349: New upstream release 5.08
+
 * Sun Nov 23 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.08b6-1
 - 1163349: New upstream beta release 5.08b6
 - Fixed incorrect reporting of fips status in configure.ac
