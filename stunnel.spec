@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.08
+Version: 5.09
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -61,7 +61,8 @@ make LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 make install DESTDIR=$RPM_BUILD_ROOT
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
-for lang in fr pl ; do
+#for lang in fr pl ; do
+for lang in pl ; do
 	mkdir -p $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8
 	mv $RPM_BUILD_ROOT/%{_mandir}/man8/*.${lang}.8* $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/
 	rename ".${lang}" "" $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/*
@@ -86,7 +87,7 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %{_libdir}/stunnel
 %exclude %{_libdir}/stunnel/libstunnel.la
 %{_mandir}/man8/stunnel.8*
-%lang(fr) %{_mandir}/fr/man8/stunnel.8*
+#%lang(fr) %{_mandir}/fr/man8/stunnel.8*
 %lang(pl) %{_mandir}/pl/man8/stunnel.8*
 %dir %{_sysconfdir}/%{name}
 %exclude %{_sysconfdir}/stunnel/*
@@ -112,6 +113,9 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %endif
 
 %changelog
+* Thu Jan 8 2015 Avesh Agarwal <avagarwa@redhat.com> - 5.09-1
+- 1163349: New upstream release 5.09.
+
 * Thu Dec 11 2014 Avesh Agarwal <avagarwa@redhat.com> - 5.08-1
 - 1163349: New upstream release 5.08
 
