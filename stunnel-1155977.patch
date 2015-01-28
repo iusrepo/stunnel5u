@@ -1,6 +1,6 @@
-diff -urNp stunnel-5.08/doc/stunnel.8 stunnel-5.08-patched/doc/stunnel.8
---- stunnel-5.08/doc/stunnel.8	2014-11-23 01:08:57.684130905 -0500
-+++ stunnel-5.08-patched/doc/stunnel.8	2014-11-23 01:43:02.455507077 -0500
+diff -urNp stunnel-5.10/doc/stunnel.8 stunnel-5.10-patch/doc/stunnel.8
+--- stunnel-5.10/doc/stunnel.8	2015-01-28 13:47:05.690115387 -0500
++++ stunnel-5.10-patch/doc/stunnel.8	2015-01-28 13:53:39.932197076 -0500
 @@ -383,7 +383,7 @@ If no host specified, defaults to all IP
  To listen on all IPv6 addresses use:
  .Sp
@@ -10,9 +10,9 @@ diff -urNp stunnel-5.08/doc/stunnel.8 stunnel-5.08-patched/doc/stunnel.8
  .Ve
  .IP "\fBCApath\fR = \s-1DIRECTORY\s0" 4
  .IX Item "CApath = DIRECTORY"
-diff -urNp stunnel-5.08/doc/stunnel.html stunnel-5.08-patched/doc/stunnel.html
---- stunnel-5.08/doc/stunnel.html	2014-11-23 01:08:57.684130905 -0500
-+++ stunnel-5.08-patched/doc/stunnel.html	2014-11-23 01:43:25.815207858 -0500
+diff -urNp stunnel-5.10/doc/stunnel.html stunnel-5.10-patch/doc/stunnel.html
+--- stunnel-5.10/doc/stunnel.html	2015-01-28 13:47:05.691115375 -0500
++++ stunnel-5.10-patch/doc/stunnel.html	2015-01-28 13:53:39.933197064 -0500
 @@ -426,7 +426,7 @@
  
  <p>To listen on all IPv6 addresses use:</p>
@@ -22,9 +22,9 @@ diff -urNp stunnel-5.08/doc/stunnel.html stunnel-5.08-patched/doc/stunnel.html
  
  </dd>
  <dt id="CApath-DIRECTORY"><b>CApath</b> = DIRECTORY</dt>
-diff -urNp stunnel-5.08/doc/stunnel.pod stunnel-5.08-patched/doc/stunnel.pod
---- stunnel-5.08/doc/stunnel.pod	2014-11-23 01:08:57.684130905 -0500
-+++ stunnel-5.08-patched/doc/stunnel.pod	2014-11-23 01:43:36.634069279 -0500
+diff -urNp stunnel-5.10/doc/stunnel.pod stunnel-5.10-patch/doc/stunnel.pod
+--- stunnel-5.10/doc/stunnel.pod	2015-01-28 13:47:05.692115362 -0500
++++ stunnel-5.10-patch/doc/stunnel.pod	2015-01-28 13:53:39.934197051 -0500
 @@ -393,7 +393,7 @@ If no host specified, defaults to all IP
  
  To listen on all IPv6 addresses use:
