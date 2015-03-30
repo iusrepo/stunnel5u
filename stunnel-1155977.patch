@@ -1,7 +1,7 @@
-diff -urNp stunnel-5.10/doc/stunnel.8 stunnel-5.10-patch/doc/stunnel.8
---- stunnel-5.10/doc/stunnel.8	2015-01-28 13:47:05.690115387 -0500
-+++ stunnel-5.10-patch/doc/stunnel.8	2015-01-28 13:53:39.932197076 -0500
-@@ -383,7 +383,7 @@ If no host specified, defaults to all IP
+diff -urNp stunnel-5.13/doc/stunnel.8 stunnel-5.13-patch/doc/stunnel.8
+--- stunnel-5.13/doc/stunnel.8	2015-03-30 15:53:04.746385291 -0400
++++ stunnel-5.13-patch/doc/stunnel.8	2015-03-30 15:52:05.298134775 -0400
+@@ -387,7 +387,7 @@ If no host specified, defaults to all IP
  To listen on all IPv6 addresses use:
  .Sp
  .Vb 1
@@ -10,10 +10,10 @@ diff -urNp stunnel-5.10/doc/stunnel.8 stunnel-5.10-patch/doc/stunnel.8
  .Ve
  .IP "\fBCApath\fR = \s-1DIRECTORY\s0" 4
  .IX Item "CApath = DIRECTORY"
-diff -urNp stunnel-5.10/doc/stunnel.html stunnel-5.10-patch/doc/stunnel.html
---- stunnel-5.10/doc/stunnel.html	2015-01-28 13:47:05.691115375 -0500
-+++ stunnel-5.10-patch/doc/stunnel.html	2015-01-28 13:53:39.933197064 -0500
-@@ -426,7 +426,7 @@
+diff -urNp stunnel-5.13/doc/stunnel.html stunnel-5.13-patch/doc/stunnel.html
+--- stunnel-5.13/doc/stunnel.html	2015-03-30 15:53:04.750385241 -0400
++++ stunnel-5.13-patch/doc/stunnel.html	2015-03-30 15:52:05.299134762 -0400
+@@ -428,7 +428,7 @@
  
  <p>To listen on all IPv6 addresses use:</p>
  
@@ -22,10 +22,10 @@ diff -urNp stunnel-5.10/doc/stunnel.html stunnel-5.10-patch/doc/stunnel.html
  
  </dd>
  <dt id="CApath-DIRECTORY"><b>CApath</b> = DIRECTORY</dt>
-diff -urNp stunnel-5.10/doc/stunnel.pod stunnel-5.10-patch/doc/stunnel.pod
---- stunnel-5.10/doc/stunnel.pod	2015-01-28 13:47:05.692115362 -0500
-+++ stunnel-5.10-patch/doc/stunnel.pod	2015-01-28 13:53:39.934197051 -0500
-@@ -393,7 +393,7 @@ If no host specified, defaults to all IP
+diff -urNp stunnel-5.13/doc/stunnel.pod stunnel-5.13-patch/doc/stunnel.pod
+--- stunnel-5.13/doc/stunnel.pod	2015-03-30 15:53:04.750385241 -0400
++++ stunnel-5.13-patch/doc/stunnel.pod	2015-03-30 15:52:05.299134762 -0400
+@@ -397,7 +397,7 @@ If no host specified, defaults to all IP
  
  To listen on all IPv6 addresses use:
  
