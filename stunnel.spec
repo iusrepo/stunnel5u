@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.14
+Version: 5.15
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -17,7 +17,6 @@ Patch0: stunnel-5-authpriv.patch
 Patch1: stunnel-5-sample.patch
 Patch2: stunnel-systemd-service.patch
 Patch3: stunnel-configure-ac.patch
-Patch4: stunnel-1155977.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake
@@ -43,7 +42,6 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %patch1 -p1 -b .sample
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
 autoreconf
@@ -113,6 +111,11 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %endif
 
 %changelog
+* Mon Apr 27 2015 Avesh Agarwal <avagarwa@redhat.com> - 5.15-1
+- New upstream release 5.15.
+- 1155977: Fixed upstream too so removed the associated patch
+- Updates other patches too.
+
 * Mon Mar 30 2015 Avesh Agarwal <avagarwa@redhat.com> - 5.14-1
 - New upstream release 5.14.
 
