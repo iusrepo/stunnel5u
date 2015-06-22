@@ -1,7 +1,7 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.17
-Release: 2%{?dist}
+Version: 5.18
+Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
@@ -14,9 +14,8 @@ Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
 Patch0: stunnel-5-authpriv.patch
-Patch1: stunnel-5-sample.patch
-Patch2: stunnel-systemd-service.patch
-Patch3: stunnel-configure-ac.patch
+Patch1: stunnel-systemd-service.patch
+Patch2: stunnel-configure-ac.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake
@@ -39,9 +38,8 @@ in conjunction with imapd to create an SSL secure IMAP server.
 %prep
 %setup -q
 %patch0 -p1 -b .authpriv
-%patch1 -p1 -b .sample
+%patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 autoreconf
@@ -111,6 +109,13 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %endif
 
 %changelog
+* Mon Jun 22 2015 Avesh Agarwal <avagarwa@redhat.com> - 5.18-1
+- New upstream release 5.18.
+- Finally deleted the patch stunnel-5-sample.patch as upstream
+  has merged those changes.
+- Fixes patches as per new code changes.
+- Fixed systemd service file related changes.
+
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.17-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
