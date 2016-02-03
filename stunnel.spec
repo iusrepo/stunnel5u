@@ -1,19 +1,19 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.18
+Version: 5.30
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
 Source0: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz
 Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
-Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
-Patch0: stunnel-5-authpriv.patch
+Source7: stunnel@.service
+Patch0: stunnel-5.30-authpriv.patch
 Patch1: stunnel-systemd-service.patch
 Patch2: stunnel-configure-ac.patch
 # util-linux is needed for rename
@@ -24,10 +24,10 @@ BuildRequires: autoconf automake
 BuildRequires: perl-podlators
 %endif
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-BuildRequires: systemd, systemd-devel
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
+BuildRequires: systemd-units
+Requires(post): systemd-units
+Requires(preun): systemd-units
+Requires(postun): systemd-units
 %endif
 
 %description
@@ -68,10 +68,10 @@ cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}
 cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
+cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{name}@.service
 %endif
 
 %files
-%defattr(-,root,root)
 %doc AUTHORS BUGS ChangeLog COPY* CREDITS PORTS README TODO
 %doc tools/stunnel.conf-sample
 %doc srpm-docs/*
@@ -83,12 +83,11 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %{_libdir}/stunnel
 %exclude %{_libdir}/stunnel/libstunnel.la
 %{_mandir}/man8/stunnel.8*
-#%lang(fr) %{_mandir}/fr/man8/stunnel.8*
 %lang(pl) %{_mandir}/pl/man8/stunnel.8*
 %dir %{_sysconfdir}/%{name}
 %exclude %{_sysconfdir}/stunnel/*
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%{_unitdir}/%{name}.service
+%{_unitdir}/%{name}*.service
 %endif
 
 %post
@@ -109,6 +108,10 @@ cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_RO
 %endif
 
 %changelog
+* Wed Feb  3 2016 Tomáš Mráz <tmraz@redhat.com> - 5.30-1
+- New upstream release 5.30
+- Add generic stunnel@.service provided by Štefan Gurský (#1195742)
+
 * Mon Jun 22 2015 Avesh Agarwal <avagarwa@redhat.com> - 5.18-1
 - New upstream release 5.18.
 - Finally deleted the patch stunnel-5-sample.patch as upstream
