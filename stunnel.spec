@@ -19,10 +19,8 @@ Patch2: stunnel-configure-ac.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake
-# for /usr/bin/pod2man
-%if 0%{?fedora} > 18 || 0%{?rhel} >= 7
-BuildRequires: perl-podlators
-%endif
+BuildRequires: /usr/bin/pod2man
+BuildRequires: /usr/bin/pod2html
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
 BuildRequires: systemd-units
 Requires(post): systemd-units
