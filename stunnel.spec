@@ -1,6 +1,6 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel
-Version: 5.30
+Version: 5.34
 Release: 1%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -50,7 +50,7 @@ if pkg-config openssl ; then
 fi
 %configure --enable-fips --enable-ipv6 --with-ssl=%{_prefix}\
 	CPPFLAGS="-UPIDFILE -DPIDFILE='\"%{_localstatedir}/run/stunnel.pid\"'"
-make LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
+make V=1 LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 
 %install
 #rm -rf $RPM_BUILD_ROOT
@@ -108,6 +108,9 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{name}@.service
 %endif
 
 %changelog
+* Wed Jul 13 2016 Tomáš Mráz <tmraz@redhat.com> - 5.34-1
+- New upstream release 5.34
+
 * Wed Feb  3 2016 Tomáš Mráz <tmraz@redhat.com> - 5.30-1
 - New upstream release 5.30
 - Add generic stunnel@.service provided by Štefan Gurský (#1195742)
