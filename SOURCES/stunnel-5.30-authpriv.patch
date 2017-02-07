@@ -34,15 +34,14 @@ diff -up stunnel-5.30/doc/stunnel.8.in.authpriv stunnel-5.30/doc/stunnel.8.in
  (Facilities are not supported on Win32.)
  .Sp
  Case is ignored for both facilities and levels.
-diff -up stunnel-5.30/src/options.c.authpriv stunnel-5.30/src/options.c
---- stunnel-5.30/src/options.c.authpriv	2016-01-15 17:45:23.000000000 +0100
-+++ stunnel-5.30/src/options.c	2016-02-03 15:07:56.309333700 +0100
-@@ -610,8 +610,12 @@ NOEXPORT char *parse_global_option(CMD c
+--- stunnel-5.40/src/options.c	2017-01-28 08:47:51.000000000 +0000
++++ stunnel-5.40/src/options.c.patch	2017-01-30 15:40:36.859007125 +0000
+@@ -1554,8 +1554,12 @@
      case CMD_BEGIN:
-         new_service_options.log_level=LOG_NOTICE;
+         section->log_level=LOG_NOTICE;
  #if !defined (USE_WIN32) && !defined (__vms)
 +#if defined(LOG_AUTHPRIV)
-+        new_global_options.log_facility=LOG_AUTHPRIV;
++	new_global_options.log_facility=LOG_AUTHPRIV;
 +#else
          new_global_options.log_facility=LOG_DAEMON;
  #endif

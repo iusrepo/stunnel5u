@@ -3,7 +3,7 @@ diff -urNp stunnel-5.18/tools/stunnel.service.in stunnel-5.18-patch/tools/stunne
 +++ stunnel-5.18-patch/tools/stunnel.service.in	2015-06-22 11:30:49.156263119 -0400
 @@ -1,10 +1,11 @@
  [Unit]
- Description=SSL tunnel for network daemons
+ Description=TLS tunnel for network daemons
 -After=syslog.target
 +After=syslog.target network.target
  

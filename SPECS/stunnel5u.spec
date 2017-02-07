@@ -1,7 +1,12 @@
+# IUS spec file for stunnel5u, forked from Fedora
+
+%global real_name stunnel
+%global ius_suffix 5u
+
 Summary: An SSL-encrypting socket wrapper
-Name: stunnel
-Version: 5.35
-Release: 1%{?dist}
+Name: %{real_name}%{?ius_suffix}
+Version: 5.40
+Release: 1.ius%{?dist}
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
@@ -28,13 +33,18 @@ Requires(preun): systemd-units
 Requires(postun): systemd-units
 %endif
 
+Provides: %{real_name} = %{version}-%{release}
+Provides: %{real_name}%{?_isa} = %{version}-%{release}
+Conflicts: %{real_name} < %{version}
+
+
 %description
 Stunnel is a socket wrapper which can provide SSL (Secure Sockets
 Layer) support to ordinary applications. For example, it can be used
 in conjunction with imapd to create an SSL secure IMAP server.
 
 %prep
-%setup -q
+%setup -q -n %{real_name}-%{version}
 %patch0 -p1 -b .authpriv
 %patch1 -p1
 %patch2 -p1
@@ -65,8 +75,8 @@ mkdir srpm-docs
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}
-cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{name}.service $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
-cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{name}@.service
+cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{real_name}.service $RPM_BUILD_ROOT%{_unitdir}/%{real_name}.service
+cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
 %endif
 
 %files
@@ -82,30 +92,35 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{name}@.service
 %exclude %{_libdir}/stunnel/libstunnel.la
 %{_mandir}/man8/stunnel.8*
 %lang(pl) %{_mandir}/pl/man8/stunnel.8*
-%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/%{real_name}
 %exclude %{_sysconfdir}/stunnel/*
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%{_unitdir}/%{name}*.service
+%{_unitdir}/%{real_name}*.service
 %endif
 
 %post
 /sbin/ldconfig
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%systemd_post %{name}.service
+%systemd_post %{real_name}.service
 %endif
 
 %preun
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%systemd_preun %{name}.service
+%systemd_preun %{real_name}.service
 %endif
 
 %postun
 /sbin/ldconfig
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%systemd_postun_with_restart %{name}.service
+%systemd_postun_with_restart %{real_name}.service
 %endif
 
 %changelog
+* Mon Jan 30 2017 Ben Harper <ben.harper@rackspace.com> - 5.40-1.ius
+- Port from Fedora to IUS
+- Latest upstream
+- update Patch0 and Patch1
+
 * Thu Jul 21 2016 Tomáš Mráz <tmraz@redhat.com> - 5.35-1
 - New upstream release 5.35 with fix for bug #1358810
 
