@@ -84,7 +84,8 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
 %endif
 
 %files
-%doc AUTHORS BUGS ChangeLog COPY* CREDITS PORTS README TODO
+%license COPY*
+%doc AUTHORS BUGS ChangeLog CREDITS PORTS README TODO
 %doc tools/stunnel.conf-sample
 %doc srpm-docs/*
 %lang(en) %doc doc/en/*
@@ -124,6 +125,7 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
 - Latest upstream
 - Update summary and description to match Fedora
 - Filter libstunnel.so from provides
+- Properly mark license files
 
 * Mon Jan 30 2017 Ben Harper <ben.harper@rackspace.com> - 5.40-1.ius
 - Port from Fedora to IUS
