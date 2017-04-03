@@ -3,7 +3,7 @@
 %global real_name stunnel
 %global ius_suffix 5u
 
-Summary: An SSL-encrypting socket wrapper
+Summary: A TLS-encrypting socket wrapper
 Name: %{real_name}%{?ius_suffix}
 Version: 5.41
 Release: 1.ius%{?dist}
@@ -39,9 +39,10 @@ Conflicts: %{real_name} < %{version}
 
 
 %description
-Stunnel is a socket wrapper which can provide SSL (Secure Sockets
-Layer) support to ordinary applications. For example, it can be used
-in conjunction with imapd to create an SSL secure IMAP server.
+Stunnel is a socket wrapper which can provide TLS/SSL
+(Transport Layer Security/Secure Sockets Layer) support
+to ordinary applications. For example, it can be used in
+conjunction with imapd to create a TLS secure IMAP server.
 
 %prep
 %setup -q -n %{real_name}-%{version}
@@ -118,6 +119,7 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
 %changelog
 * Mon Apr 03 2017 Carl George <carl.george@rackspace.com> - 5.41-1.ius
 - Latest upstream
+- Update summary and description to match Fedora
 
 * Mon Jan 30 2017 Ben Harper <ben.harper@rackspace.com> - 5.40-1.ius
 - Port from Fedora to IUS
