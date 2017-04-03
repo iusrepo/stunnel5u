@@ -88,7 +88,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
 %doc tools/stunnel.conf-sample
 %doc srpm-docs/*
 %lang(en) %doc doc/en/*
-%lang(po) %doc doc/pl/*
+%lang(pl) %doc doc/pl/*
 %{_bindir}/stunnel
 %exclude %{_bindir}/stunnel3
 %exclude %{_datadir}/doc/stunnel
@@ -125,6 +125,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
 - Update summary and description to match Fedora
 - Filter libstunnel.so from provides
 - Properly mark license files
+- Properly mark Polish docs
 
 * Mon Jan 30 2017 Ben Harper <ben.harper@rackspace.com> - 5.40-1.ius
 - Port from Fedora to IUS
