@@ -37,6 +37,9 @@ Provides: %{real_name} = %{version}-%{release}
 Provides: %{real_name}%{?_isa} = %{version}-%{release}
 Conflicts: %{real_name} < %{version}
 
+%{?filter_provides_in:%filter_provides_in %{_libdir}/stunnel/.*\.so$}
+%{?filter_setup}
+
 
 %description
 Stunnel is a socket wrapper which can provide TLS/SSL
@@ -120,6 +123,7 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
 * Mon Apr 03 2017 Carl George <carl.george@rackspace.com> - 5.41-1.ius
 - Latest upstream
 - Update summary and description to match Fedora
+- Filter libstunnel.so from provides
 
 * Mon Jan 30 2017 Ben Harper <ben.harper@rackspace.com> - 5.40-1.ius
 - Port from Fedora to IUS
