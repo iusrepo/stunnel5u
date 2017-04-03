@@ -65,22 +65,21 @@ fi
 make V=1 LDADD="-pie -Wl,-z,defs,-z,relro,-z,now"
 
 %install
-#rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%{buildroot}
 # Move the translated man pages to the right subdirectories, and strip off the
 # language suffixes.
 #for lang in fr pl ; do
 for lang in pl ; do
-	mkdir -p $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8
-	mv $RPM_BUILD_ROOT/%{_mandir}/man8/*.${lang}.8* $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/
-	rename ".${lang}" "" $RPM_BUILD_ROOT/%{_mandir}/${lang}/man8/*
+	mkdir -p %{buildroot}%{_mandir}/${lang}/man8
+	mv %{buildroot}%{_mandir}/man8/*.${lang}.8* %{buildroot}%{_mandir}/${lang}/man8/
+	rename ".${lang}" "" %{buildroot}%{_mandir}/${lang}/man8/*
 done
 mkdir srpm-docs
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-mkdir -p $RPM_BUILD_ROOT%{_unitdir}
-cp $RPM_BUILD_ROOT%{_datadir}/doc/stunnel/examples/%{real_name}.service $RPM_BUILD_ROOT%{_unitdir}/%{real_name}.service
-cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
+mkdir -p %{buildroot}%{_unitdir}
+cp %{buildroot}%{_datadir}/doc/stunnel/examples/%{real_name}.service %{buildroot}%{_unitdir}/%{real_name}.service
+cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
 %endif
 
 %files
