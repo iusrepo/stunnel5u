@@ -5,7 +5,7 @@
 
 Summary: An SSL-encrypting socket wrapper
 Name: %{real_name}%{?ius_suffix}
-Version: 5.40
+Version: 5.41
 Release: 1.ius%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -116,6 +116,9 @@ cp %{SOURCE7} $RPM_BUILD_ROOT%{_unitdir}/%{real_name}@.service
 %endif
 
 %changelog
+* Mon Apr 03 2017 Carl George <carl.george@rackspace.com> - 5.41-1.ius
+- Latest upstream
+
 * Mon Jan 30 2017 Ben Harper <ben.harper@rackspace.com> - 5.40-1.ius
 - Port from Fedora to IUS
 - Latest upstream
