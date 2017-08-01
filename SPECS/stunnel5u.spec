@@ -5,7 +5,7 @@
 
 Summary: A TLS-encrypting socket wrapper
 Name: %{real_name}%{?ius_suffix}
-Version: 5.41
+Version: 5.42
 Release: 1.ius%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -23,7 +23,7 @@ Patch1: stunnel-systemd-service.patch
 Patch2: stunnel-configure-ac.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
-BuildRequires: autoconf automake
+BuildRequires: autoconf automake autoconf-archive
 BuildRequires: /usr/bin/pod2man
 BuildRequires: /usr/bin/pod2html
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
@@ -120,6 +120,10 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
 %endif
 
 %changelog
+* Tue Aug 01 2017 Ben Harper <ben.harper@rackspace.com> - 5.42-1.ius
+- Latest upstream
+- add autoconf-archive as BuildRequires
+
 * Mon Apr 03 2017 Carl George <carl.george@rackspace.com> - 5.41-1.ius
 - Latest upstream
 - Update summary and description to match Fedora
