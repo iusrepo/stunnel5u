@@ -5,7 +5,7 @@
 
 Summary: A TLS-encrypting socket wrapper
 Name: %{real_name}%{?ius_suffix}
-Version: 5.42
+Version: 5.43
 Release: 1.ius%{?dist}
 License: GPLv2
 Group: Applications/Internet
@@ -21,6 +21,7 @@ Source7: stunnel@.service
 Patch0: stunnel-5.30-authpriv.patch
 Patch1: stunnel-systemd-service.patch
 Patch2: stunnel-configure-ac.patch
+Patch3: stunnel-5.42-system-ciphers.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake autoconf-archive
@@ -50,8 +51,12 @@ conjunction with imapd to create a TLS secure IMAP server.
 %prep
 %setup -q -n %{real_name}-%{version}
 %patch0 -p1 -b .authpriv
-%patch1 -p1
-%patch2 -p1
+%patch1 -p1 -b .systemd-service
+%patch2 -p1 -b .fips-config
+%patch3 -p1 -b .system-ciphers
+
+# Fix the configure script output for FIPS mode
+sed -i '/yes).*result: no/,+1s/result: no/result: yes/;s/as_echo "no"/as_echo "yes"/' configure
 
 %build
 autoreconf
@@ -120,6 +125,13 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
 %endif
 
 %changelog
+* Mon Nov 06 2017 Ben Harper <ben.harper@rackspace.com> - 5.43-1.ius
+- Latest upstream
+- add Patch3 from Fedora
+  https://src.fedoraproject.org/rpms/stunnel/c/f5d966e6f395effe9ac23e3cb3c0215c4e20bf1e
+- FIPS tweak from Fedora
+  https://src.fedoraproject.org/rpms/stunnel/c/ddf8652d866bfcfdbb1e4e1dd65a345005464be9
+
 * Tue Aug 01 2017 Ben Harper <ben.harper@rackspace.com> - 5.42-1.ius
 - Latest upstream
 - add autoconf-archive as BuildRequires
