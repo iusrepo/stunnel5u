@@ -17,7 +17,6 @@ Source7: stunnel@.service
 Patch0: stunnel-5.40-authpriv.patch
 Patch1: stunnel-5.40-systemd-service.patch
 Patch2: stunnel-configure-ac.patch
-Patch3: stunnel-5.42-system-ciphers.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake autoconf-archive
@@ -46,9 +45,6 @@ conjunction with imapd to create a TLS secure IMAP server.
 
 %prep
 %autosetup -n stunnel-%{version} -p 1
-
-# Fix the configure script output for FIPS mode
-sed -i '/yes).*result: no/,+1s/result: no/result: yes/;s/as_echo "no"/as_echo "yes"/' configure
 
 %build
 autoreconf -v
@@ -120,6 +116,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 * Wed Nov 29 2017 Carl George <carl@george.computer> - 5.44-1.ius
 - Latest upstream
 - Sync patches with Fedora
+- Revert cipher changes as RHEL does not have a system-wide crypto policy
 
 * Mon Nov 06 2017 Ben Harper <ben.harper@rackspace.com> - 5.43-1.ius
 - Latest upstream
