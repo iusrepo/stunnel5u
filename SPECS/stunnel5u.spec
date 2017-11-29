@@ -2,7 +2,7 @@
 
 Summary: A TLS-encrypting socket wrapper
 Name: stunnel5u
-Version: 5.43
+Version: 5.44
 Release: 1.ius%{?dist}
 License: GPLv2
 URL: http://www.stunnel.org/
@@ -117,6 +117,9 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %endif
 
 %changelog
+* Wed Nov 29 2017 Carl George <carl@george.computer> - 5.44-1.ius
+- Latest upstream
+
 * Mon Nov 06 2017 Ben Harper <ben.harper@rackspace.com> - 5.43-1.ius
 - Latest upstream
 - add Patch3 from Fedora
