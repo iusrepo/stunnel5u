@@ -14,8 +14,8 @@ Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
 Source7: stunnel@.service
-Patch0: stunnel-5.30-authpriv.patch
-Patch1: stunnel-systemd-service.patch
+Patch0: stunnel-5.40-authpriv.patch
+Patch1: stunnel-5.40-systemd-service.patch
 Patch2: stunnel-configure-ac.patch
 Patch3: stunnel-5.42-system-ciphers.patch
 # util-linux is needed for rename
@@ -119,6 +119,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %changelog
 * Wed Nov 29 2017 Carl George <carl@george.computer> - 5.44-1.ius
 - Latest upstream
+- Sync patches with Fedora
 
 * Mon Nov 06 2017 Ben Harper <ben.harper@rackspace.com> - 5.43-1.ius
 - Latest upstream

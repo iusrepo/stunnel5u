@@ -1,0 +1,56 @@
+diff --git a/doc/stunnel.8.in b/doc/stunnel.8.in
+index a00cc78..85a0123 100644
+--- a/doc/stunnel.8.in
++++ b/doc/stunnel.8.in
+@@ -204,7 +204,7 @@ info (6), or debug (7).  All logs for the specified level and
+ all levels numerically less than it will be shown.  Use \fIdebug = debug\fR or
+ \&\fIdebug = 7\fR for greatest debugging output.  The default is notice (5).
+ .Sp
+-The syslog facility 'daemon' will be used unless a facility name is supplied.
++The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)
+ .Sp
+ Case is ignored for both facilities and levels.
+diff --git a/doc/stunnel.html.in b/doc/stunnel.html.in
+index b7a0663..6bb01cd 100644
+--- a/doc/stunnel.html.in
++++ b/doc/stunnel.html.in
+@@ -244,7 +244,7 @@
+ 
+ <p>Level is one of the syslog level names or numbers emerg (0), alert (1), crit (2), err (3), warning (4), notice (5), info (6), or debug (7). All logs for the specified level and all levels numerically less than it will be shown. Use <i>debug = debug</i> or <i>debug = 7</i> for greatest debugging output. The default is notice (5).</p>
+ 
+-<p>The syslog facility &#39;daemon&#39; will be used unless a facility name is supplied. (Facilities are not supported on Win32.)</p>
++<p>The syslog facility &#39;authpriv&#39; will be used unless a facility name is supplied. (Facilities are not supported on Win32.)</p>
+ 
+ <p>Case is ignored for both facilities and levels.</p>
+ 
+diff --git a/doc/stunnel.pod.in b/doc/stunnel.pod.in
+index 42d3a33..3806b5a 100644
+--- a/doc/stunnel.pod.in
++++ b/doc/stunnel.pod.in
+@@ -192,7 +192,7 @@ info (6), or debug (7).  All logs for the specified level and
+ all levels numerically less than it will be shown.  Use I<debug = debug> or
+ I<debug = 7> for greatest debugging output.  The default is notice (5).
+ 
+-The syslog facility 'daemon' will be used unless a facility name is supplied.
++The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)
+ 
+ Case is ignored for both facilities and levels.
+diff --git a/src/options.c b/src/options.c
+index 5881486..345d274 100644
+--- a/src/options.c
++++ b/src/options.c
+@@ -1554,8 +1554,12 @@ NOEXPORT char *parse_service_option(CMD cmd, SERVICE_OPTIONS *section,
+     case CMD_BEGIN:
+         section->log_level=LOG_NOTICE;
+ #if !defined (USE_WIN32) && !defined (__vms)
++#if defined(LOG_AUTHPRIV)
++        new_global_options.log_facility=LOG_AUTHPRIV;
++#else
+         new_global_options.log_facility=LOG_DAEMON;
+ #endif
++#endif
+         break;
+     case CMD_EXEC:
+         if(strcasecmp(opt, "debug"))
