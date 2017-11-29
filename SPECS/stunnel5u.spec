@@ -1,14 +1,10 @@
 # IUS spec file for stunnel5u, forked from Fedora
 
-%global real_name stunnel
-%global ius_suffix 5u
-
 Summary: A TLS-encrypting socket wrapper
-Name: %{real_name}%{?ius_suffix}
+Name: stunnel5u
 Version: 5.43
 Release: 1.ius%{?dist}
 License: GPLv2
-Group: Applications/Internet
 URL: http://www.stunnel.org/
 Source0: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz
 Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
@@ -34,9 +30,9 @@ Requires(preun): systemd-units
 Requires(postun): systemd-units
 %endif
 
-Provides: %{real_name} = %{version}-%{release}
-Provides: %{real_name}%{?_isa} = %{version}-%{release}
-Conflicts: %{real_name} < %{version}
+Provides: stunnel = %{version}-%{release}
+Provides: stunnel%{?_isa} = %{version}-%{release}
+Conflicts: stunnel < %{version}
 
 %{?filter_provides_in:%filter_provides_in %{_libdir}/stunnel/.*\.so$}
 %{?filter_setup}
@@ -49,17 +45,13 @@ to ordinary applications. For example, it can be used in
 conjunction with imapd to create a TLS secure IMAP server.
 
 %prep
-%setup -q -n %{real_name}-%{version}
-%patch0 -p1 -b .authpriv
-%patch1 -p1 -b .systemd-service
-%patch2 -p1 -b .fips-config
-%patch3 -p1 -b .system-ciphers
+%autosetup -n stunnel-%{version} -p 1
 
 # Fix the configure script output for FIPS mode
 sed -i '/yes).*result: no/,+1s/result: no/result: yes/;s/as_echo "no"/as_echo "yes"/' configure
 
 %build
-autoreconf
+autoreconf -v
 CFLAGS="$RPM_OPT_FLAGS -fPIC"; export CFLAGS
 if pkg-config openssl ; then
 	CFLAGS="$CFLAGS `pkg-config --cflags openssl`";
@@ -83,15 +75,15 @@ mkdir srpm-docs
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} %{SOURCE6} srpm-docs
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
 mkdir -p %{buildroot}%{_unitdir}
-cp %{buildroot}%{_datadir}/doc/stunnel/examples/%{real_name}.service %{buildroot}%{_unitdir}/%{real_name}.service
-cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
+cp %{buildroot}%{_datadir}/doc/stunnel/examples/stunnel.service %{buildroot}%{_unitdir}/stunnel.service
+cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %endif
 
 %files
-%license COPY*
 %doc AUTHORS BUGS ChangeLog CREDITS PORTS README TODO
 %doc tools/stunnel.conf-sample
 %doc srpm-docs/*
+%license COPY*
 %lang(en) %doc doc/en/*
 %lang(pl) %doc doc/pl/*
 %{_bindir}/stunnel
@@ -101,27 +93,27 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/%{real_name}@.service
 %exclude %{_libdir}/stunnel/libstunnel.la
 %{_mandir}/man8/stunnel.8*
 %lang(pl) %{_mandir}/pl/man8/stunnel.8*
-%dir %{_sysconfdir}/%{real_name}
+%dir %{_sysconfdir}/stunnel
 %exclude %{_sysconfdir}/stunnel/*
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%{_unitdir}/%{real_name}*.service
+%{_unitdir}/stunnel*.service
 %endif
 
 %post
 /sbin/ldconfig
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%systemd_post %{real_name}.service
+%systemd_post stunnel.service
 %endif
 
 %preun
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%systemd_preun %{real_name}.service
+%systemd_preun stunnel.service
 %endif
 
 %postun
 /sbin/ldconfig
 %if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
-%systemd_postun_with_restart %{real_name}.service
+%systemd_postun_with_restart stunnel.service
 %endif
 
 %changelog

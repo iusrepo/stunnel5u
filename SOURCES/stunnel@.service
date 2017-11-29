@@ -1,5 +1,5 @@
 [Unit]
-Description=SSL tunnel for %I
+Description=TLS tunnel for %I
 After=syslog.target network.target
 
 [Service]
