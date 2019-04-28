@@ -2,7 +2,7 @@
 
 Summary: A TLS-encrypting socket wrapper
 Name: stunnel5u
-Version: 5.44
+Version: 5.53
 Release: 1.ius%{?dist}
 License: GPLv2
 URL: http://www.stunnel.org/
@@ -14,9 +14,9 @@ Source4: stunnel-sfinger.conf
 Source5: pop3-redirect.xinetd
 Source6: stunnel-pop3s-client.conf
 Source7: stunnel@.service
-Patch0: stunnel-5.40-authpriv.patch
-Patch1: stunnel-5.40-systemd-service.patch
-Patch2: stunnel-configure-ac.patch
+Patch0: stunnel-5.50-authpriv.patch
+Patch1: stunnel-5.50-systemd-service.patch
+Patch2: stunnel-5.46-system-ciphers.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake autoconf-archive
@@ -113,6 +113,9 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %endif
 
 %changelog
+* Sun Apr 28 2019 evitalis <evitalis@users.noreply.github.com> - 5.53-1.ius
+- Update to latest upstream
+
 * Wed Nov 29 2017 Carl George <carl@george.computer> - 5.44-1.ius
 - Latest upstream
 - Sync patches with Fedora
