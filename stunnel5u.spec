@@ -16,7 +16,6 @@ Source6: stunnel-pop3s-client.conf
 Source7: stunnel@.service
 Patch0: stunnel-5.50-authpriv.patch
 Patch1: stunnel-5.50-systemd-service.patch
-Patch2: stunnel-5.46-system-ciphers.patch
 # util-linux is needed for rename
 BuildRequires: openssl-devel, pkgconfig, tcp_wrappers-devel, util-linux
 BuildRequires: autoconf automake autoconf-archive
@@ -115,6 +114,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %changelog
 * Sun Jun 09 2019 Carl George <carl@george.computer> - 5.54-1
 - Latest upstream
+- Drop patch2, el7 doesn't have system level ciphers
 
 * Sun Apr 28 2019 evitalis <evitalis@users.noreply.github.com> - 5.53-1.ius
 - Update to latest upstream
