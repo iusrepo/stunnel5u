@@ -2,7 +2,7 @@
 
 Summary: A TLS-encrypting socket wrapper
 Name: stunnel5u
-Version: 5.54
+Version: 5.55
 Release: 1%{?dist}
 License: GPLv2
 URL: http://www.stunnel.org/
@@ -112,6 +112,9 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %endif
 
 %changelog
+* Thu Oct 03 2019 Eugenio Cordoba <e.cordoba.24@gmail.com> - 5.55-1
+- Update to 5.55
+
 * Sun Jun 09 2019 Carl George <carl@george.computer> - 5.54-1
 - Latest upstream
 - Drop patch2, el7 doesn't have system level ciphers
@@ -280,7 +283,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 - Sourced URL of sha256 hash file in spec file.
 
 * Tue Mar 26 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-2
-- Resolves: 927841 
+- Resolves: 927841
 
 * Mon Mar 4 2013 Avesh Agarwal <avagarwa@redhat.com> - 4.55-1
 - New upstream realease 4.55
