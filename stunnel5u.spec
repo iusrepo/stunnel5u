@@ -2,7 +2,7 @@
 
 Summary: A TLS-encrypting socket wrapper
 Name: stunnel5u
-Version: 5.55
+Version: 5.56
 Release: 1%{?dist}
 License: GPLv2
 URL: http://www.stunnel.org/
@@ -75,7 +75,7 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %endif
 
 %files
-%doc AUTHORS BUGS ChangeLog CREDITS PORTS README TODO
+%doc AUTHORS.md BUGS.md CREDITS.md PORTS.md README.md TODO.md
 %doc tools/stunnel.conf-sample
 %doc srpm-docs/*
 %license COPY*
@@ -112,6 +112,9 @@ cp %{SOURCE7} %{buildroot}%{_unitdir}/stunnel@.service
 %endif
 
 %changelog
+* Wed Nov 27 2019 Carl George <carl@george.computer> - 5.56-1
+- Latest upstream
+
 * Thu Oct 03 2019 Eugenio Cordoba <e.cordoba.24@gmail.com> - 5.55-1
 - Update to 5.55
 
